@@ -1,7 +1,7 @@
 
 x_min=-1100000
 y_min=300000
-x_max=1650000
+x_max=2000000
 y_max=2400000
 
 options='-overwrite -co "FORMAT=NC4" -co "COMPRESS=DEFLATE" -co "ZLEVEL=3"'

@@ -194,7 +194,7 @@ def generate_grid_description(grid_resolution, domain, restart=False):
 
     if domain.lower() in ("alaska", "ak"):
 
-        mx_max = 11000
+        mx_max = 14200
         my_max = 8400
 
         resolution_max = 250
@@ -407,7 +407,7 @@ def generate_ocean(ocean, **kwargs):
     """
 
     params_dict = OrderedDict()
-    elif ocean == "const":
+    if ocean == "const":
         params_dict["ocean"] = "constant"
     else:
         print(("ocean {} not recognized, exiting".format(ocean)))
@@ -435,7 +435,6 @@ def list_queues():
             result.add(q)
 
     return result
-
 
 
 # information about systems
