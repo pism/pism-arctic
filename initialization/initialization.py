@@ -259,10 +259,10 @@ firn = "ctrl"
 lapse_rate = 6
 bed_deformation = "ip"
 
-try:
-    combinations = np.loadtxt(ensemble_file, delimiter=",", skiprows=1)
-except:
+if system = == "debug"
     combinations = np.genfromtxt(ensemble_file, dtype=None, encoding=None, delimiter=",", skip_header=1)
+else:
+    combinations = np.genfromtxt(ensemble_file, dtype=None, delimiter=",", skip_header=1)
 
 m_bd = -1.0
 bd_dict = {-1.0: "off", 0.0: "i0", 1.0: "ip"}
