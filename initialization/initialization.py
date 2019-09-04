@@ -259,7 +259,7 @@ firn = "ctrl"
 lapse_rate = 6
 bed_deformation = "ip"
 
-if system = == "debug"
+if system == "debug"
     combinations = np.genfromtxt(ensemble_file, dtype=None, encoding=None, delimiter=",", skip_header=1)
 else:
     combinations = np.genfromtxt(ensemble_file, dtype=None, delimiter=",", skip_header=1)
