@@ -389,7 +389,7 @@ def generate_climate(climate, **kwargs):
     if climate in ("elevation"):
         params_dict["surface"] = "elevation"
         params_dict["ice_surface_temp"] = "0,0,-100,5000"
-        params_dict["climatic_mass_balance"] = "-3.,3,0,800,2500"
+        params_dict["climatic_mass_balance"] = "-6.,3,0,800,2500"
     else:
         print(("climate {} not recognized, exiting".format(climate)))
         import sys
