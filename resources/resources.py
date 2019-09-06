@@ -32,7 +32,7 @@ def generate_domain(domain):
     Returns: string
     """
 
-    if domain.lower() in ("alaska", "ak"):
+    if domain.lower() in ("alaska", "ak", "atna"):
         pism_exec = "pismr"
     else:
         print(("Domain {} not recognized, exiting".format(domain)))
@@ -197,32 +197,40 @@ def generate_grid_description(grid_resolution, domain, restart=False):
         mx_max = 14200
         my_max = 8400
 
-        resolution_max = 250
+    elif domain.lower() in ("atna"):
 
-        accepted_resolutions = (250, 500, 1000, 2000, 5000, 10000)
+        mx_max = 9680
+        my_max = 6000
 
-        try:
-            grid_resolution in accepted_resolutions
-            pass
-        except:
-            print(("grid resolution {}m not recognized".format(grid_resolution)))
+    else:
+        print("how did I get here")
 
-        if grid_resolution < 1200:
-            skip_max = 200
-            mz = 201
-            mzb = 21
-        elif (grid_resolution >= 1200) and (grid_resolution < 4500):
-            skip_max = 100
-            mz = 201
-            mzb = 21
-        elif (grid_resolution >= 4500) and (grid_resolution < 18000):
-            skip_max = 50
-            mz = 201
-            mzb = 21
-        else:
-            skip_max = 20
-            mz = 101
-            mzb = 11
+    resolution_max = 250
+
+    accepted_resolutions = (250, 500, 1000, 2000, 5000, 10000)
+
+    try:
+        grid_resolution in accepted_resolutions
+        pass
+    except:
+        print(("grid resolution {}m not recognized".format(grid_resolution)))
+
+    if grid_resolution < 1200:
+        skip_max = 200
+        mz = 201
+        mzb = 21
+    elif (grid_resolution >= 1200) and (grid_resolution < 4500):
+        skip_max = 100
+        mz = 201
+        mzb = 21
+    elif (grid_resolution >= 4500) and (grid_resolution < 18000):
+        skip_max = 50
+        mz = 201
+        mzb = 21
+    else:
+        skip_max = 20
+        mz = 101
+        mzb = 11
 
     grid_div = grid_resolution / resolution_max
 
@@ -388,8 +396,8 @@ def generate_climate(climate, **kwargs):
     params_dict = OrderedDict()
     if climate in ("elevation"):
         params_dict["surface"] = "elevation"
-        params_dict["ice_surface_temp"] = "0,0,-100,5000"
-        params_dict["climatic_mass_balance"] = "-6.,3,0,800,2500"
+        params_dict["ice_surface_temp"] = "0,-15,-100,5000"
+        params_dict["climatic_mass_balance"] = "-6.,3,0,1000,2500"
     else:
         print(("climate {} not recognized, exiting".format(climate)))
         import sys

@@ -55,7 +55,7 @@ parser.add_argument(
     "--calving", dest="calving", choices=["float_kill", "vonmises_calving"], help="calving", default="float_kill"
 )
 parser.add_argument(
-    "-d", "--domain", dest="domain", choices=["alaska", "ak"], help="sets the modeling domain", default="alaska"
+    "-d", "--domain", dest="domain", choices=["alaska", "ak", "atna"], help="sets the modeling domain", default="atna"
 )
 parser.add_argument("--exstep", dest="exstep", help="Writing interval for spatial time series", default=1)
 parser.add_argument(
