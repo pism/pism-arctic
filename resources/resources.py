@@ -416,7 +416,7 @@ def generate_climate(climate, **kwargs):
         if "atmosphere_lapse_rate_file" not in kwargs:
             params_dict[
                 "atmosphere_lapse_rate_file"
-            ] = "../data_sets/climate_focing/climate_cru_TS31_historical_1910_2009.nc"
+            ] = "../data_sets/climate_forcing/climate_cru_TS31_historical_1910_2009.nc"
         else:
             params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
         params_dict["surface"] = "pdd"
