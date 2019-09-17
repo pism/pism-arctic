@@ -360,7 +360,7 @@ def generate_climate(climate, **kwargs):
         params_dict["ice_surface_temp"] = "0,-15,-100,5000"
         params_dict["climatic_mass_balance"] = "-6.,3,0,1000,2500"
     elif climate in ("present"):
-        params_dict["atmosphere"] = "given,lapse_rate"
+        params_dict["atmosphere"] = "given"
         params_dict["surface.pdd.factor_ice"] = 4.59 / 910  # Shea et al (2009)
         params_dict["surface.pdd.factor_snow"] = 3.04 / 910  # Shea et al (2009)
         params_dict["surface.pdd.refreeze"] = 0
