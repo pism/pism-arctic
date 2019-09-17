@@ -400,8 +400,8 @@ def generate_climate(climate, **kwargs):
         params_dict["climatic_mass_balance"] = "-6.,3,0,1000,2500"
     elif climate in ("present"):
         params_dict["atmosphere"] = "given,lapse_rate"
-        params_dict["surface.pdd.factor_ice"] = 4.59 / ice_density  # Shea et al (2009)
-        params_dict["surface.pdd.factor_snow"] = 3.04 / ice_density  # Shea et al (2009)
+        params_dict["surface.pdd.factor_ice"] = 4.59 / 910  # Shea et al (2009)
+        params_dict["surface.pdd.factor_snow"] = 3.04 / 910  # Shea et al (2009)
         params_dict["surface.pdd.refreeze"] = 0
         if "atmosphere_given_file" not in kwargs:
             params_dict["atmosphere_given_file"] = " climate_cru_TS31_historical_1910_2009.nc"
