@@ -23,8 +23,7 @@ y_min=150000
 x_max=1660000
 y_max=1660000
 
-#for grid in 500 1000 2000 5000 10000; do
-for grid in 250; do
+for grid in 250 500 1000 2000 5000 10000; do
     gdalwarp $options -dstnodata -9999 -cutline  ../shape_files/atna-domain.shp -s_srs EPSG:4326 -t_srs EPSG:3338 -te $x_min $y_min $x_max $y_max -tr $grid $grid GEBCO_2019.nc pism_${domain}_g${grid}m.nc
     ncrename -v Band1,surface  pism_${domain}_g${grid}m.nc
     ncatted -a standard_name,surface,o,c,"surface_altitude"  pism_${domain}_g${grid}m.nc

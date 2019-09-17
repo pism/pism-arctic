@@ -45,60 +45,16 @@ def generate_domain(domain):
 
 spatial_ts_vars = {}
 
-
-spatial_ts_vars["basic"] = [
-    "basal_melt_rate_grounded",
-    "beta",
-    "bwat",
-    "dHdt",
-    "height_above_flotation",
-    "frontal_melt_rate",
-    "frontal_melt_retreat_rate",
-    "ice_mass",
-    "mask",
-    "mass_fluxes",
-    "sftgif",
-    "thk",
-    "tillwat",
-    "topg",
-    "usurf",
-    "velbase_mag",
-    "velsurf_mag",
-    "vonmises_calving_rate",
-    "vonmises_stress",
-]
-
-spatial_ts_vars["hydro"] = [
-    "basal_melt_rate_grounded",
-    "bwat",
-    "bwp",
-    "bwatvel",
-    "beta",
-    "dHdt",
-    "frontal_melt_rate",
-    "frontal_melt_retreat_rate",
-    "hydraulic_potential",
-    "ice_mass",
-    "mask",
-    "mass_fluxes",
-    "sftgif",
-    "temppabase",
-    "tillwat",
-    "thk",
-    "topg",
-    "usurf",
-    "velbase_mag",
-    "velsurf_mag",
-    "vonmises_calving_rate",
-]
-
 spatial_ts_vars["basic"] = [
     "bwat",
     "dHdt",
+    "climatic_mass_balance",
     "ice_mass",
+    "ice_surface_temp",
     "mask",
     "mass_fluxes",
     "sftgif",
+    "surface_fluxes",
     "thk",
     "topg",
     "usurf",
