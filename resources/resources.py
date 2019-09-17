@@ -199,8 +199,8 @@ def generate_grid_description(grid_resolution, domain, restart=False):
 
     elif domain.lower() in ("atna"):
 
-        mx_max = 9680
-        my_max = 6000
+        mx_max = 8320
+        my_max = 6040
 
     else:
         print("how did I get here")
@@ -398,6 +398,26 @@ def generate_climate(climate, **kwargs):
         params_dict["surface"] = "elevation"
         params_dict["ice_surface_temp"] = "0,-15,-100,5000"
         params_dict["climatic_mass_balance"] = "-6.,3,0,1000,2500"
+    elif climate in ("present"):
+        params_dict["atmosphere"] = "given,lapse_rate"
+        params_dict["surface.pdd.factor_ice"] = 4.59 / ice_density  # Shea et al (2009)
+        params_dict["surface.pdd.factor_snow"] = 3.04 / ice_density  # Shea et al (2009)
+        params_dict["surface.pdd.refreeze"] = 0
+        if "atmosphere_given_file" not in kwargs:
+            params_dict["atmosphere_given_file"] = " climate_cru_TS31_historical_1910_2009.nc"
+        else:
+            params_dict["atmosphere_given_file"] = kwargs["../data_sets/climate_forcing/atmosphere_given_file"]
+        if "temp_lapse_rate" not in kwargs:
+            params_dict["temp_lapse_rate"] = 6
+        else:
+            params_dict["temp_lapse_rate"] = kwargs["temp_lapse_rate"]
+        if "atmosphere_lapse_rate_file" not in kwargs:
+            params_dict[
+                "atmosphere_lapse_rate_file"
+            ] = "../data_sets/climate_focing/climate_cru_TS31_historical_1910_2009.nc"
+        else:
+            params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
+        params_dict["surface"] = "pdd"
     else:
         print(("climate {} not recognized, exiting".format(climate)))
         import sys

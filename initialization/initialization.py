@@ -416,7 +416,7 @@ for n, combination in enumerate(combinations):
                 ice_density = 910.0
                 climate_parameters = {}
 
-                climate_params_dict = generate_climate("elevation", **climate_parameters)
+                climate_params_dict = generate_climate("present", **climate_parameters)
 
                 hydro_params_dict = generate_hydrology(hydrology)
 
