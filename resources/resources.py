@@ -362,7 +362,7 @@ def generate_climate(climate, **kwargs):
     elif climate in ("present"):
         params_dict["atmosphere"] = "given,lapse_rate"
         params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
-        params_dict["surface.pdd.factor_snow"] = 4 / 910  # Ziemen et al (2016)
+        params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.std_dev"] = 4.23
         if "atmosphere_given_file" not in kwargs:
             params_dict[
