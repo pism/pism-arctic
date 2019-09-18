@@ -1,12 +1,11 @@
 #!/bin/bash
 
-options='-overwrite -r average -co FORMAT=NC4 -co COMPRESS=DEFLATE -co ZLEVEL=1'
-
 x_min=-420000
 y_min=150000
 x_max=1660000
 y_max=1660000
 
+options='-overwrite -r average -co FORMAT=NC4 -co COMPRESS=DEFLATE -co ZLEVEL=1'
 grid=2000
 
 file=pr_decadal_summaries_AK_CAN_2km_CRU_TS31_historical.zip

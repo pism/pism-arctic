@@ -155,13 +155,13 @@ def generate_grid_description(grid_resolution, domain, restart=False):
 
     if domain.lower() in ("alaska", "ak"):
 
-        mx_max = 14200
+        mx_max = 12400
         my_max = 8400
 
     elif domain.lower() in ("atna"):
 
         mx_max = 8320
-        my_max = 6040
+        my_max = 4000
 
     else:
         print("how did I get here")

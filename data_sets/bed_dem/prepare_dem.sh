@@ -19,7 +19,7 @@ done
 domain=atna
 
 x_min=-420000
-y_min=150000
+y_min=660000
 x_max=1660000
 y_max=1660000
 
