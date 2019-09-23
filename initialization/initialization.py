@@ -41,7 +41,10 @@ def map_dict(val, mdict):
 grid_choices = (250, 500, 1000, 2000, 5000, 10000)
 # set up the option parser
 parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
-parser.description = "Generating scripts for warming experiments."
+parser.description = "Generating scripts for model initialization."
+parser.add_argument(
+    "-i", "--initial_state_file", dest="initialstatefile", help="Input file to restart from", default=None
+)
 parser.add_argument(
     "-n", "--n_procs", dest="n", type=int, help="""number of cores/processors. default=140.""", default=140
 )
@@ -94,9 +97,6 @@ parser.add_argument(
     default="basic",
 )
 parser.add_argument(
-    "--forcing_type", dest="forcing_type", choices=["ctrl", "e_age"], help="output size type", default="ctrl"
-)
-parser.add_argument(
     "--hydrology",
     dest="hydrology",
     choices=["null", "diffuse", "routing"],
@@ -145,7 +145,7 @@ parser.add_argument(
     "--ensemble_file",
     dest="ensemble_file",
     help="File that has all combinations for ensemble study",
-    default=None,
+    default="../uncertainty_quantification/initialization.csv",
 )
 
 options = parser.parse_args()
@@ -167,8 +167,7 @@ calving = options.calving
 climate = "warming"
 exstep = options.exstep
 float_kill_calve_near_grounding_line = options.float_kill_calve_near_grounding_line
-forcing_type = options.forcing_type
-frontal_melt = True
+initialstatefile = options.initialstatefile
 grid = options.grid
 hydrology = options.hydrology
 stress_balance = options.stress_balance
@@ -370,8 +369,14 @@ for n, combination in enumerate(combinations):
                 }
 
                 if start == simulation_start_year:
-                    general_params_dict["bootstrap"] = ""
-                    general_params_dict["i"] = pism_dataname
+                    if initialstatefile is None:
+                        general_params_dict["bootstrap"] = ""
+                        general_params_dict["i"] = pism_dataname
+                    else:
+                        general_params_dict["bootstrap"] = ""
+                        general_params_dict["i"] = pism_dataname
+                        general_params_dict["regrid_file"] = initialstatefile
+                        general_params_dict["regrid_vars"] = regridvars
                 else:
                     general_params_dict["i"] = regridfile
 
