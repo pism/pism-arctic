@@ -164,6 +164,11 @@ def generate_grid_description(grid_resolution, domain, restart=False):
         mx_max = 8320
         my_max = 4000
 
+    elif domain.lower() in ("arctic"):
+
+        mx_max = 15200
+        my_max = 15200
+
     else:
         print("how did I get here")
 
@@ -359,7 +364,7 @@ def generate_climate(climate, **kwargs):
     if climate in ("elevation"):
         params_dict["surface"] = "elevation"
         params_dict["ice_surface_temp"] = "0,-15,-100,5000"
-        params_dict["climatic_mass_balance"] = "-6.,3,0,1000,2500"
+        params_dict["climatic_mass_balance"] = "-6.,2.5,0,1000,2500"
     elif climate in ("present"):
         params_dict["atmosphere"] = "given,lapse_rate"
         params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)

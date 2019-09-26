@@ -1,5 +1,22 @@
+#!/bin/bash
+
 options='-overwrite -r average -co FORMAT=NC4 -co COMPRESS=DEFLATE -co ZLEVEL=1'
 
+domain=arctic
+
+x_min=-1800000
+y_min=-1800000
+x_max=5800000
+y_max=5800000
+
+for grid in 500 1000 2000 5000 10000 20000 40000; do
+    gdalwarp $options -s_srs EPSG:4326 -t_srs EPSG:5639 -te $x_min $y_min $x_max $y_max  -tr $grid $grid GEBCO_2019.nc pism_${domain}_g${grid}m.nc
+    ncrename -v Band1,topg  pism_${domain}_g${grid}m.nc
+    ncatted -a standard_name,topg,o,c,"bedrock_altitude"  pism_${domain}_g${grid}m.nc
+    ncap2 -O -s "land_ice_area_fraction_retreat(\$y,\$x)=0b;"  pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m.nc
+done
+
+exit
 
 # AK domain
 
@@ -35,4 +52,5 @@ for grid in 250 500 1000 2000 5000 10000; do
     ncap2 -O -s "bedrock=surface-ice_thickness;"  pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m.nc
     ncatted -a standard_name,bedrock,o,c,"bedrock_altitude" -a _FillValue,bedrock,d,, pism_${domain}_g${grid}m.nc
     ncks -O -4 -L 3 -v Band1 -x  pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m.nc
+    ncap2 -O -s "land_ice_area_fraction_retreat(\$y,\$x)=0b; where(bedrock>0 && ice_thickness>0) land_ice_area_fraction_retreat=1;"  pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m
 done

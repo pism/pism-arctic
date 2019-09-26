@@ -56,9 +56,11 @@ netcdf pism_overrides {
     pism_overrides:geometry.ice_free_thickness_standard = 10.0;
     pism_overrides:geometry.ice_free_thickness_standard_doc = "If ice is thinner than this standard then the mask is set to MASK_ICE_FREE_BEDROCK or MASK_ICE_FREE_OCEAN.";
 
-    pism_overrides:output.ISMIP6 = "false";
-    pism_overrides:output.ISMIP6_type = "boolean";
-    pism_overrides:output.ISMIP6_doc = "Follow ISMIP6 conventions (units, variable names, \"standard names\") when writing output variables.";
+    pism_overrides:stress_balance.sia.bed_smoother.range = 5.0e2;
+    pism_overrides:stress_balance.sia.bed_smoother.range_doc = "half-width of smoothing domain for stressbalance::BedSmoother, in implementing :cite:`Schoofbasaltopg2003` bed roughness parameterization for SIA; set value to zero to turn off mechanism";
+    pism_overrides:stress_balance.sia.bed_smoother.range_option = "bed_smoother_range";
+    pism_overrides:stress_balance.sia.bed_smoother.range_type = "scalar";
+    pism_overrides:stress_balance.sia.bed_smoother.range_units = "meters";
 
 
 }
