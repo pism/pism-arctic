@@ -32,7 +32,7 @@ def generate_domain(domain):
     Returns: string
     """
 
-    if domain.lower() in ("alaska", "ak", "atna", "arctic"):
+    if domain.lower() in ["alaska", "ak", "atna", "arctic"]:
         pism_exec = "pismr"
     else:
         print(("Domain {} not recognized, exiting".format(domain)))
