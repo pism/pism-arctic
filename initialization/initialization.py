@@ -62,7 +62,12 @@ parser.add_argument(
     default="float_kill",
 )
 parser.add_argument(
-    "-d", "--domain", dest="domain", choices=["alaska", "ak", "atna"], help="sets the modeling domain", default="atna"
+    "-d",
+    "--domain",
+    dest="domain",
+    choices=["alaska", "ak", "atna", "arctic"],
+    help="sets the modeling domain",
+    default="atna",
 )
 parser.add_argument("--exstep", dest="exstep", help="Writing interval for spatial time series", default=1)
 parser.add_argument(
@@ -437,7 +442,7 @@ for n, combination in enumerate(combinations):
                     outfile, tsstep, start=simulation_start_year, end=simulation_end_year, odir=dirs["scalar"]
                 )
 
-                ocean_params_dict = {"shelf_base_melt_rate": 1}
+                ocean_params_dict = {"shelf_base_melt_rate": 1.0}
 
                 all_params_dict = merge_dicts(
                     general_params_dict,
