@@ -55,7 +55,11 @@ parser.add_argument(
     "-q", "--queue", dest="queue", choices=list_queues(), help="""queue. default=long.""", default="long"
 )
 parser.add_argument(
-    "--calving", dest="calving", choices=["float_kill", "vonmises_calving"], help="calving", default="float_kill"
+    "--calving",
+    dest="calving",
+    choices=["float_kill", "vonmises_calving", "eigen_calving"],
+    help="calving",
+    default="float_kill",
 )
 parser.add_argument(
     "-d", "--domain", dest="domain", choices=["alaska", "ak", "atna"], help="sets the modeling domain", default="atna"
@@ -433,12 +437,15 @@ for n, combination in enumerate(combinations):
                     outfile, tsstep, start=simulation_start_year, end=simulation_end_year, odir=dirs["scalar"]
                 )
 
+                ocean_params_dict = {"shelf_base_melt_rate": 1}
+
                 all_params_dict = merge_dicts(
                     general_params_dict,
                     grid_params_dict,
                     stress_balance_params_dict,
                     climate_params_dict,
                     hydro_params_dict,
+                    ocean_params_dict,
                     calving_params_dict,
                     scalar_ts_dict,
                 )

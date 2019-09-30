@@ -8,12 +8,20 @@ x_min=-1800000
 y_min=-1800000
 x_max=5800000
 y_max=5800000
+mcbed=BedMachineGreenland-2017-09-20.nc
 
-for grid in 500 1000 2000 5000 10000 20000 40000; do
+for grid in 1000 2000 5000 10000 20000 40000; do
     gdalwarp $options -s_srs EPSG:4326 -t_srs EPSG:5639 -te $x_min $y_min $x_max $y_max  -tr $grid $grid GEBCO_2019.nc pism_${domain}_g${grid}m.nc
     ncrename -v Band1,topg  pism_${domain}_g${grid}m.nc
     ncatted -a standard_name,topg,o,c,"bedrock_altitude"  pism_${domain}_g${grid}m.nc
     ncap2 -O -s "land_ice_area_fraction_retreat(\$y,\$x)=0b;"  pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m.nc
+    gdalwarp $options -s_srs EPSG:3413 -t_srs EPSG:5639 -te $x_min $y_min $x_max $y_max  -tr $grid $grid NETCDF:"${mcbed}":bed pism_gris_g${grid}m_bed.nc
+    ncrename -v Band1,bed  pism_gris_g${grid}m_bed.nc
+    gdalwarp $options -s_srs EPSG:3413 -t_srs EPSG:5639 -te $x_min $y_min $x_max $y_max  -tr $grid $grid NETCDF:"${mcbed}":thickness pism_gris_g${grid}m_thickness.nc
+    ncrename -v Band1,thickness  pism_gris_g${grid}m_thickness.nc
+    ncks -A -v bed pism_gris_g${grid}m_bed.nc  pism_${domain}_g${grid}m.nc
+    ncks -A -v thickness pism_gris_g${grid}m_thickness.nc  pism_${domain}_g${grid}m.nc
+    ncap2 -O -s "where(thickness>0.1) {topg=bed;};" pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m.nc
 done
 
 exit
