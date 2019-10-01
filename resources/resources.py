@@ -32,20 +32,36 @@ def generate_domain(domain):
     Returns: string
     """
 
-    if domain.lower() in ["alaska", "ak", "atna", "arctic"]:
+    if domain.lower() in ("alaska", "ak", "atna", "arctic"):
         pism_exec = "pismr"
     else:
         print(("Domain {} not recognized, exiting".format(domain)))
         import sys
 
         sys.exit(0)
-
     return pism_exec
 
 
 spatial_ts_vars = {}
 
 spatial_ts_vars["basic"] = [
+    "bwat",
+    "dHdt",
+    "climatic_mass_balance",
+    "diffusivity",
+    "ice_mass",
+    "ice_surface_temp",
+    "mask",
+    "mass_fluxes",
+    "sftgif",
+    "thk",
+    "topg",
+    "usurf",
+    "velbase_mag",
+    "velsurf_mag",
+]
+
+spatial_ts_vars["pdd"] = [
     "bwat",
     "dHdt",
     "climatic_mass_balance",

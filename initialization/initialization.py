@@ -38,7 +38,7 @@ def map_dict(val, mdict):
         return val
 
 
-grid_choices = (250, 500, 1000, 2000, 5000, 10000)
+grid_choices = (250, 500, 1000, 2000, 5000, 10000, 20000, 40000)
 # set up the option parser
 parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.description = "Generating scripts for model initialization."
@@ -191,10 +191,13 @@ domain = options.domain
 pism_exec = generate_domain(domain)
 
 
+print(domain)
 if domain.lower() in ("alaska", "ak"):
     pism_dataname = "$input_dir/data_sets/bed_dem/pism_alaska_g{}m.nc".format(grid)
 elif domain.lower() in ("atna"):
     pism_dataname = "$input_dir/data_sets/bed_dem/pism_atna_g{}m.nc".format(grid)
+elif domain.lower() in ("arctic"):
+    pism_dataname = "$input_dir/data_sets/bed_dem/pism_arctic_g{}m.nc".format(grid)
 else:
     print("Domain {} not recognized".format(domain))
 
@@ -428,9 +431,14 @@ for n, combination in enumerate(combinations):
                 stress_balance_params_dict = generate_stress_balance(stress_balance, sb_params_dict)
 
                 ice_density = 910.0
-                climate_parameters = {}
+                climate_parameters = {
+                    "atmosphere_given_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
+                    "lapse_rate_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
+                    "atmosphere_delta_T_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
+                    "paleo_precip_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
+                }
 
-                climate_params_dict = generate_climate("present", **climate_parameters)
+                climate_params_dict = generate_climate("paleo", **climate_parameters)
 
                 hydro_params_dict = generate_hydrology(hydrology)
 
