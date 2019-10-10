@@ -99,11 +99,7 @@ parser.add_argument(
     default="pleiades_broadwell",
 )
 parser.add_argument(
-    "--spatial_ts",
-    dest="spatial_ts",
-    choices=["basic", "standard", "none", "svs", "divq"],
-    help="output size type",
-    default="basic",
+    "--spatial_ts", dest="spatial_ts", choices=["basic", "pdd"], help="output size type", default="basic"
 )
 parser.add_argument(
     "--hydrology",
@@ -277,7 +273,7 @@ if system == "debug":
 else:
     combinations = np.genfromtxt(ensemble_file, dtype=None, delimiter=",", skip_header=1)
 
-m_bd = -1.0
+m_bd = 0.0
 bd_dict = {-1.0: "off", 0.0: "i0", 1.0: "ip"}
 
 tsstep = "yearly"
@@ -311,7 +307,7 @@ m_sb = None
 
 for n, combination in enumerate(combinations):
 
-    run_id, ppq, sia_e = combination
+    run_id, ppq, sia_e, mbp = combination
     bed_deformation = bd_dict[m_bd]
 
     ttphi = "{},{},{},{}".format(phi_min, phi_max, topg_min, topg_max)
@@ -398,7 +394,7 @@ for n, combination in enumerate(combinations):
                 if osize != "custom":
                     general_params_dict["o_size"] = osize
                 else:
-                    general_params_dict["output.sizes.medium"] = "sftgif,velsurf_mag"
+                    general_params_dict["output.sizes.medium"] = "sftgif,velsurf_mag,usurf,mask,uvelsurf,vvelsurf"
 
                 if bed_deformation != "off":
                     general_params_dict["bed_def"] = "lc"
@@ -433,16 +429,19 @@ for n, combination in enumerate(combinations):
                 ice_density = 910.0
                 climate_parameters = {
                     "atmosphere_given_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
+                    "atmosphere_lapse_rate_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
                     "lapse_rate_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
+                    "pdd_sd_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
                     "atmosphere_delta_T_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
                     "paleo_precip_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
+                    "atmosphere.precip_exponential_factor_for_temperature": 7.0 / 100,
                 }
 
                 climate_params_dict = generate_climate("paleo", **climate_parameters)
 
                 hydro_params_dict = generate_hydrology(hydrology)
 
-                calving_parameters = {}
+                calving_parameters = {"thickness_calving_threshold": 75}
 
                 calving_params_dict = generate_calving(calving, **calving_parameters)
 
@@ -450,8 +449,16 @@ for n, combination in enumerate(combinations):
                     outfile, tsstep, start=simulation_start_year, end=simulation_end_year, odir=dirs["scalar"]
                 )
 
-                ocean_params_dict = {"shelf_base_melt_rate": 1.0}
+                ocean_params_dict = {
+                    "shelf_base_melt_rate": 0.9,
+                    "ocean_delta_SL_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
+                    "ocean_delta_MBP_file": "pism_abrupt_glacial_climate_forcing.nc",
+                }
 
+                if mbp == 1:
+                    ocean_params_dict["ocean"] = "const,delta_MBP"
+                else:
+                    ocean_params_dict["ocean"] = "const"
                 all_params_dict = merge_dicts(
                     general_params_dict,
                     grid_params_dict,

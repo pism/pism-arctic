@@ -200,19 +200,19 @@ def generate_grid_description(grid_resolution, domain, restart=False):
 
     if grid_resolution < 1200:
         skip_max = 200
-        mz = 201
+        mz = 251
         mzb = 21
     elif (grid_resolution >= 1200) and (grid_resolution < 4500):
         skip_max = 100
-        mz = 201
+        mz = 251
         mzb = 21
     elif (grid_resolution >= 4500) and (grid_resolution < 18000):
         skip_max = 50
-        mz = 201
+        mz = 251
         mzb = 21
     else:
         skip_max = 20
-        mz = 101
+        mz = 251
         mzb = 11
 
     grid_div = grid_resolution / resolution_max
@@ -225,7 +225,7 @@ def generate_grid_description(grid_resolution, domain, restart=False):
     horizontal_grid["My"] = my
 
     vertical_grid = OrderedDict()
-    vertical_grid["Lz"] = 4000
+    vertical_grid["Lz"] = 5000
     vertical_grid["Lbz"] = 2000
     vertical_grid["z_spacing"] = "equal"
     vertical_grid["Mz"] = mz
@@ -353,7 +353,6 @@ def generate_calving(calving, **kwargs):
         params_dict["calving"] = calving
     elif calving in ("eigen_calving", "vonmises_calving"):
         params_dict["calving"] = "{},thickness_calving".format(calving)
-        params_dict["thickness_calving_threshold"] = 500
     elif calving in ("hybrid_calving"):
         params_dict["calving"] = "eigen_calving,vonmises_calving,thickness_calving"
     elif calving in ("float_kill", "float_kill,ocean_kill", "vonmises_calving,ocean_kill", "eigen_calving,ocean_kill"):
@@ -414,7 +413,7 @@ def generate_climate(climate, **kwargs):
                 "atmosphere_given_file"
             ] = "../data_sets/climate_forcing/climate_cru_TS31_historical_1910_2009.nc"
         else:
-            params_dict["atmosphere_given_file"] = kwargs["../data_sets/climate_forcing/atmosphere_given_file"]
+            params_dict["atmosphere_given_file"] = kwargs["atmosphere_given_file"]
         if "temp_lapse_rate" not in kwargs:
             params_dict["temp_lapse_rate"] = 6
         else:
@@ -426,11 +425,11 @@ def generate_climate(climate, **kwargs):
         else:
             params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
         if "atmosphere_delta_T_file" not in kwargs:
-            params_dict["atmosphere_delta_T_file"] = "../data_sets/climate_forcing/paleo_modifier.nc"
+            params_dict["atmosphere_delta_T_file"] = "../data_sets/climate_forcing/arctic_paleo_modifier.nc"
         else:
             params_dict["atmosphere_delta_T_file"] = kwargs["atmosphere_delta_T_file"]
         if "atmosphere_paleo_precip_file" not in kwargs:
-            params_dict["atmosphere_paleo_precip_file"] = "../data_sets/climate_forcing/paleo_modifier.nc"
+            params_dict["atmosphere_paleo_precip_file"] = "../data_sets/climate_forcing/arctic_paleo_modifier.nc"
         else:
             params_dict["atmosphere_paleo_precip_file"] = kwargs["atmosphere_paleo_precip_file"]
         params_dict["surface"] = "pdd"

@@ -15,12 +15,14 @@ parser.add_argument("-T_max", dest="T_max", type=float, help="Maximum temperatur
 parser.add_argument("-t_max", dest="t_max", type=float, help="lower time bound for maximum temperature", default=100)
 parser.add_argument("-b", dest="backpressure_max", type=float, help="Maximum backpressure fraction", default=0.3)
 parser.add_argument("-n", dest="n", type=float, help="power-law exponent", default=1)
+parser.add_argument("-s", dest="s", type=float, help="sea level offset", default=0)
 
 
 options = parser.parse_args()
 args = options.FILE
 backpressure_max = options.backpressure_max
 n = options.n
+dSL = options.s
 start = 0
 end = 500000
 step = 10
@@ -78,7 +80,7 @@ dT_var[:] = temp
 
 var = "delta_SL"
 dSL_var = def_var(nc, var, "m")
-SL_0 = 0.0
+SL_0 = dSL
 
 SL = np.zeros_like(time_interval_since_refdate) + SL_0
 dSL_var[:] = SL
