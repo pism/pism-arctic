@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# ncks -d lat,33000,-1 GEBCO_2019.nc cut_GEBCO_2019.nc
+
 options='-overwrite -r average -co FORMAT=NC4 -co COMPRESS=DEFLATE -co ZLEVEL=1'
 
 domain=arctic
@@ -12,15 +14,11 @@ mcbed=BedMachineGreenland-2017-09-20.nc
 
 CUT="-dstnodata 0 -cutline  ../shape_files/no-model-domain.shp"
 
-for grid in 1000 2000 5000 10000 20000 40000; do
-    gdalwarp $options -s_srs EPSG:4326 -t_srs EPSG:5936 -te $x_min $y_min $x_max $y_max  -tr $grid $grid GEBCO_2019.nc pism_${domain}_g${grid}m.nc
-    gdalwarp $options $CUT -s_srs EPSG:4326 -t_srs EPSG:5936 -te $x_min $y_min $x_max $y_max  -tr $grid $grid GEBCO_2019.nc nmd_g${grid}m.nc
+for grid in 5000 10000 20000 40000; do
+    gdalwarp $options -s_srs EPSG:4326 -t_srs EPSG:5936 -te $x_min $y_min $x_max $y_max  -tr $grid $grid cut_GEBCO_2019.nc pism_${domain}_g${grid}m.nc
     ncrename -v Band1,topg  pism_${domain}_g${grid}m.nc
     ncatted -a standard_name,topg,o,c,"bedrock_altitude"  pism_${domain}_g${grid}m.nc
-    ncatted -a _FillValue,Band1,d,, 
-    ncks -A -v Band1 nmd_g${grid}m.nc  pism_${domain}_g${grid}m.nc 
-    ncap2 -O -s "land_ice_area_fraction_retreat(\$y,\$x)=1b; where(Band1!=1) {land_ice_area_fraction_retreat=0;};"  pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m.nc pism_${domain}_g${grid}m.nc
-    ncks -v Band1 -x pism_${domain}_g${grid}m.nc pism_${domain}_g${grid}m.nc 
+    ncks -O -v Band1 -x pism_${domain}_g${grid}m.nc pism_${domain}_g${grid}m.nc 
     gdalwarp $options -s_srs EPSG:3413 -t_srs EPSG:5936 -te $x_min $y_min $x_max $y_max  -tr $grid $grid NETCDF:"${mcbed}":bed pism_gris_g${grid}m_bed.nc
     ncrename -v Band1,bed  pism_gris_g${grid}m_bed.nc
     gdalwarp $options -s_srs EPSG:3413 -t_srs EPSG:5936 -te $x_min $y_min $x_max $y_max  -tr $grid $grid NETCDF:"${mcbed}":thickness pism_gris_g${grid}m_thickness.nc
@@ -29,8 +27,11 @@ for grid in 1000 2000 5000 10000 20000 40000; do
     ncks -A -v thickness pism_gris_g${grid}m_thickness.nc  pism_${domain}_g${grid}m.nc
     ncatted -a standard_name,thickness,o,c,"land_ice_thickness" -a _FillValue,thickness,d,, pism_${domain}_g${grid}m.nc
     ncap2 -O -s "where(thickness>0.1) {topg=bed;} where(thickness<0) {thickness=0;};;" pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m.nc
+    gdalwarp $options $CUT -s_srs EPSG:4326 -t_srs EPSG:5936 -te $x_min $y_min $x_max $y_max  -tr $grid $grid cut_GEBCO_2019.nc nmd_g${grid}m.nc
+    ncatted -a _FillValue,Band1,d,, nmd_g${grid}m.nc
+    ncks -A -v Band1 nmd_g${grid}m.nc  pism_${domain}_g${grid}m.nc 
+    ncap2 -O -s "land_ice_area_fraction_retreat(\$y,\$x)=1b; where(Band1!=0) {land_ice_area_fraction_retreat=0;};"  pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m.nc
 done
-
 exit
 
 # AK domain
