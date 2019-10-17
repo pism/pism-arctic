@@ -441,24 +441,26 @@ for n, combination in enumerate(combinations):
 
                 hydro_params_dict = generate_hydrology(hydrology)
 
-                calving_parameters = {"thickness_calving_threshold": 75}
+                calving_parameters = {"thickness_calving_threshold": 50}
 
                 calving_params_dict = generate_calving(calving, **calving_parameters)
+
+                front_retreat_params_dict = {"front_retreat_file": pism_dataname}
+                ocean_params_dict = {
+                    "shelf_base_melt_rate": 0.2,
+                    "ocean_delta_SL_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
+                    "ocean_frac_MBP_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
+                }
+
+                if mbp == 1:
+                    ocean_params_dict["ocean"] = "constant,frac_MBP"
+                else:
+                    ocean_params_dict["ocean"] = "constant"
 
                 scalar_ts_dict = generate_scalar_ts(
                     outfile, tsstep, start=simulation_start_year, end=simulation_end_year, odir=dirs["scalar"]
                 )
 
-                ocean_params_dict = {
-                    "shelf_base_melt_rate": 0.9,
-                    "ocean_delta_SL_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
-                    "ocean_delta_MBP_file": "pism_abrupt_glacial_climate_forcing.nc",
-                }
-
-                if mbp == 1:
-                    ocean_params_dict["ocean"] = "const,delta_MBP"
-                else:
-                    ocean_params_dict["ocean"] = "const"
                 all_params_dict = merge_dicts(
                     general_params_dict,
                     grid_params_dict,
