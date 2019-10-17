@@ -75,7 +75,7 @@ dT_var = def_var(nc, var, "K")
 T_0 = 0.0
 
 temp = np.zeros_like(time_interval_since_refdate) + T_max
-temp[0 : int((t_max / step))] = np.linspace(T_0, T_max, t_max / step)
+# temp[0 : int((t_max / step))] = np.linspace(T_0, T_max, t_max / step)
 dT_var[:] = temp
 
 var = "delta_SL"
@@ -85,45 +85,8 @@ SL_0 = dSL
 SL = np.zeros_like(time_interval_since_refdate) + SL_0
 dSL_var[:] = SL
 
-T_max = 0
-T_min = -10
-psi_min = 0.01
-psi_max = 1.0
+psi = np.zeros_like(temp) + 0.6
 
-a = (psi_max - psi_min) / (np.power(T_max, n) - np.power(T_min, n))
-b = psi_min - a * np.power(T_min, n)
-
-psi = np.zeros_like(temp)
-psi = a * (temp) ** n + b
-psi[temp < T_min] = psi_min
-
-var = "frac_mass_flux"
-if var not in list(nc.variables.keys()):
-    frac_var = def_var(nc, var, "1")
-else:
-    frac_var = nc.variables[var]
-
-frac_var[:] = psi
-
-T_max = 0
-T_min = -10
-psi_min = backpressure_max
-psi_max = 0.05
-
-a = (psi_max - psi_min) / (np.power(T_max, n) - np.power(T_min, n))
-b = psi_min - a * np.power(T_min, n)
-psi = np.zeros_like(temp)
-psi = a * (temp) ** n + b
-psi[temp < T_min] = psi_min
-psi[temp > T_max] = psi_max
-
-var = "delta_MBP"
-if var not in list(nc.variables.keys()):
-    frac_var = def_var(nc, var, "1")
-else:
-    frac_var = nc.variables[var]
-
-frac_var[:] = psi
 
 var = "frac_MBP"
 if var not in list(nc.variables.keys()):
