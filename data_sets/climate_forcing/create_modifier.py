@@ -85,7 +85,7 @@ SL_0 = dSL
 SL = np.zeros_like(time_interval_since_refdate) + SL_0
 dSL_var[:] = SL
 
-psi = np.zeros_like(temp) + 0.6
+psi = np.zeros_like(temp) + 0.75
 
 
 var = "frac_MBP"
