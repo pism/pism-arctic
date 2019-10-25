@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# ncks -d lat,33000,-1 GEBCO_2019.nc cut_GEBCO_2019.nc
+# ncks -d lat,28000,-1 GEBCO_2019.nc cut_GEBCO_2019.nc
 
 options='-overwrite -r average -co FORMAT=NC4 -co COMPRESS=DEFLATE -co ZLEVEL=1'
 
 domain=arctic
 
-x_min=-1800000
-y_min=-1800000
-x_max=5800000
-y_max=5800000
+x_min=-5800000
+y_min=-5800000
+x_max=9800000
+y_max=9800000
 mcbed=BedMachineGreenland-2017-09-20.nc
 
 CUT="-dstnodata 0 -cutline  ../shape_files/no-model-domain.shp"
 
-for grid in 10000 5000 2000; do
+for grid in 1000 2000 5000 10000 20000 40000; do
     gdalwarp $options -s_srs EPSG:4326 -t_srs EPSG:5936 -te $x_min $y_min $x_max $y_max  -tr $grid $grid cut_GEBCO_2019.nc pism_${domain}_g${grid}m.nc
     ncrename -v Band1,topg  pism_${domain}_g${grid}m.nc
     ncatted -a standard_name,topg,o,c,"bedrock_altitude"  pism_${domain}_g${grid}m.nc

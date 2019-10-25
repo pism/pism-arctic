@@ -190,7 +190,7 @@ def generate_grid_description(grid_resolution, domain, restart=False):
 
     resolution_max = 250
 
-    accepted_resolutions = (250, 500, 1000, 2000, 5000, 10000)
+    accepted_resolutions = (500, 1000, 2000, 5000, 10000)
 
     try:
         grid_resolution in accepted_resolutions
