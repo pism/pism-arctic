@@ -65,9 +65,9 @@ parser.add_argument(
     "-d",
     "--domain",
     dest="domain",
-    choices=["alaska", "ak", "atna", "arctic"],
+    choices=["akglaciers", "arctic"],
     help="sets the modeling domain",
-    default="atna",
+    default="arctic",
 )
 parser.add_argument("--exstep", dest="exstep", help="Writing interval for spatial time series", default=1)
 parser.add_argument(
@@ -169,7 +169,7 @@ system = options.system
 spatial_ts = options.spatial_ts
 
 calving = options.calving
-climate = "warming"
+climate = "elevation"
 exstep = options.exstep
 float_kill_calve_near_grounding_line = options.float_kill_calve_near_grounding_line
 initialstatefile = options.initialstatefile
@@ -192,7 +192,7 @@ if domain.lower() in ("alaska", "ak"):
     pism_dataname = "$input_dir/data_sets/bed_dem/pism_alaska_g{}m.nc".format(grid)
 elif domain.lower() in ("atna"):
     pism_dataname = "$input_dir/data_sets/bed_dem/pism_atna_g{}m.nc".format(grid)
-elif domain.lower() in ("arctic"):
+elif domain.lower() in ("arctic", "akglaciers"):
     pism_dataname = "$input_dir/data_sets/bed_dem/pism_arctic_g{}m.nc".format(grid)
 else:
     print("Domain {} not recognized".format(domain))
@@ -307,7 +307,7 @@ m_sb = None
 
 for n, combination in enumerate(combinations):
 
-    run_id, ppq, sia_e, mbp = combination
+    run_id, ppq, sia_e, mbp, climate_file = combination
     bed_deformation = bd_dict[m_bd]
 
     ttphi = "{},{},{},{}".format(phi_min, phi_max, topg_min, topg_max)
@@ -427,17 +427,24 @@ for n, combination in enumerate(combinations):
                 stress_balance_params_dict = generate_stress_balance(stress_balance, sb_params_dict)
 
                 ice_density = 910.0
+                # climate_parameters = {
+                #     "atmosphere_given_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
+                #     "atmosphere_lapse_rate_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
+                #     "lapse_rate_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
+                #     "pdd_sd_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
+                #     "atmosphere_delta_T_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
+                #     "paleo_precip_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
+                #     "atmosphere.precip_exponential_factor_for_temperature": 7.0 / 100,
+                # }
+
                 climate_parameters = {
-                    "atmosphere_given_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
-                    "atmosphere_lapse_rate_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
-                    "lapse_rate_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
-                    "pdd_sd_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
-                    "atmosphere_delta_T_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
-                    "paleo_precip_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
-                    "atmosphere.precip_exponential_factor_for_temperature": 7.0 / 100,
+                    "atmosphere_given_file": "../data_sets/climate_forcing/{}".format(climate_file),
+                    "atmosphere_lapse_rate_file": "../data_sets/climate_forcing/{}".format(climate_file),
+                    "lapse_rate_file": "../data_sets/climate_forcing/{}".format(climate_file),
+                    "atmosphere_delta_T_file": "../data_sets/climate_forcing/{}".format(climate_file),
                 }
 
-                climate_params_dict = generate_climate("paleo", **climate_parameters)
+                climate_params_dict = generate_climate(climate, **climate_parameters)
 
                 hydro_params_dict = generate_hydrology(hydrology)
 

@@ -32,8 +32,16 @@ def generate_domain(domain):
     Returns: string
     """
 
-    if domain.lower() in ("alaska", "ak", "atna", "arctic"):
+    if domain.lower() in ("arctic"):
         pism_exec = "pismr"
+    elif domain.lower() in ("akglaciers"):
+        x_min = -1600000.0
+        x_max = 3600000.0
+        y_min = -1920000.0
+        y_max = -860000.0
+        pism_exec = """pismr -regional -x_range {x_min},{x_max} -y_range {y_min},{y_max}  -bootstrap -regional.zero_gradient true -regional.no_model_strip 5.0""".format(
+            x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
+        )
     else:
         print(("Domain {} not recognized, exiting".format(domain)))
         import sys
@@ -379,32 +387,10 @@ def generate_climate(climate, **kwargs):
     params_dict = OrderedDict()
     if climate in ("elevation"):
         params_dict["surface"] = "elevation"
-        params_dict["ice_surface_temp"] = "0,-15,-100,5000"
+        params_dict["ice_surface_temp"] = "0,-15,-100,2000"
         params_dict["climatic_mass_balance"] = "-6.,2.5,0,1000,2500"
-    elif climate in ("present"):
+    elif climate in ("snap"):
         params_dict["atmosphere"] = "given,lapse_rate"
-        params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
-        params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
-        params_dict["surface.pdd.std_dev"] = 4.23
-        if "atmosphere_given_file" not in kwargs:
-            params_dict[
-                "atmosphere_given_file"
-            ] = "../data_sets/climate_forcing/climate_cru_TS31_historical_1910_2009.nc"
-        else:
-            params_dict["atmosphere_given_file"] = kwargs["../data_sets/climate_forcing/atmosphere_given_file"]
-        if "temp_lapse_rate" not in kwargs:
-            params_dict["temp_lapse_rate"] = 6
-        else:
-            params_dict["temp_lapse_rate"] = kwargs["temp_lapse_rate"]
-        if "atmosphere_lapse_rate_file" not in kwargs:
-            params_dict[
-                "atmosphere_lapse_rate_file"
-            ] = "../data_sets/climate_forcing/climate_cru_TS31_historical_1910_2009.nc"
-        else:
-            params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
-        params_dict["surface"] = "pdd"
-    elif climate in ("paleo"):
-        params_dict["atmosphere"] = "given,lapse_rate,delta_T,paleo_precip"
         params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.std_dev"] = 4.23
@@ -419,17 +405,51 @@ def generate_climate(climate, **kwargs):
         else:
             params_dict["temp_lapse_rate"] = kwargs["temp_lapse_rate"]
         if "atmosphere_lapse_rate_file" not in kwargs:
-            params_dict[
-                "atmosphere_lapse_rate_file"
-            ] = "../data_sets/climate_forcing/climate_cru_TS31_historical_1910_2009.nc"
+            params_dict["atmosphere_lapse_rate_file"] = "climate_cru_TS31_historical_1910_2009.nc"
+        else:
+            params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
+        params_dict["surface"] = "pdd"
+    elif climate in ("snap_flux"):
+        params_dict["atmosphere"] = "given,lapse_rate"
+        params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
+        params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
+        params_dict["surface.pdd.std_dev"] = 4.23
+        if "atmosphere_given_file" not in kwargs:
+            params_dict["atmosphere_given_file"] = "climate_cru_TS31_historical_1910_2009.nc"
+        else:
+            params_dict["atmosphere_given_file"] = kwargs["atmosphere_given_file"]
+        if "temp_lapse_rate" not in kwargs:
+            params_dict["temp_lapse_rate"] = 6
+        else:
+            params_dict["temp_lapse_rate"] = kwargs["temp_lapse_rate"]
+        if "atmosphere_lapse_rate_file" not in kwargs:
+            params_dict["atmosphere_lapse_rate_file"] = "climate_cru_TS31_historical_1910_2009.nc"
+        else:
+            params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
+        params_dict["surface"] = "pdd,forcing"
+    elif climate in ("paleo"):
+        params_dict["atmosphere"] = "given,lapse_rate,delta_T,paleo_precip"
+        params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
+        params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
+        params_dict["surface.pdd.std_dev"] = 4.23
+        if "atmosphere_given_file" not in kwargs:
+            params_dict["atmosphere_given_file"] = "climate_cru_TS31_historical_1910_2009.nc"
+        else:
+            params_dict["atmosphere_given_file"] = kwargs["atmosphere_given_file"]
+        if "temp_lapse_rate" not in kwargs:
+            params_dict["temp_lapse_rate"] = 6
+        else:
+            params_dict["temp_lapse_rate"] = kwargs["temp_lapse_rate"]
+        if "atmosphere_lapse_rate_file" not in kwargs:
+            params_dict["atmosphere_lapse_rate_file"] = "climate_cru_TS31_historical_1910_2009.nc"
         else:
             params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
         if "atmosphere_delta_T_file" not in kwargs:
-            params_dict["atmosphere_delta_T_file"] = "../data_sets/climate_forcing/arctic_paleo_modifier.nc"
+            params_dict["atmosphere_delta_T_file"] = "arctic_paleo_modifier.nc"
         else:
             params_dict["atmosphere_delta_T_file"] = kwargs["atmosphere_delta_T_file"]
         if "atmosphere_paleo_precip_file" not in kwargs:
-            params_dict["atmosphere_paleo_precip_file"] = "../data_sets/climate_forcing/arctic_paleo_modifier.nc"
+            params_dict["atmosphere_paleo_precip_file"] = "arctic_paleo_modifier.nc"
         else:
             params_dict["atmosphere_paleo_precip_file"] = kwargs["atmosphere_paleo_precip_file"]
         params_dict["surface"] = "pdd"

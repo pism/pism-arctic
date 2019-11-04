@@ -1,9 +1,11 @@
 #!/bin/bash
 
-x_min=-420000
-y_min=150000
-x_max=1660000
-y_max=1660000
+epsg=5936
+
+x_min=-5800000
+y_min=-5800000
+x_max=9800000
+y_max=9800000
 
 options='-overwrite -r average -co FORMAT=NC4 -co COMPRESS=DEFLATE -co ZLEVEL=1'
 grid=2000
@@ -37,7 +39,8 @@ gdalwarp $options -te $x_min $y_min $x_max $y_max -tr $grid $grid AKCanada_2km_D
 
 cdo setattribute,precipitation@units="kg m-2 year-1" -chname,Band1,precipitation -timmean -mergetime pr_decadal_mean_annual_total_mm_cru_TS31_historical_*.nc  pr_mean_annual_total_mm_cru_TS31_historical_1910_2009.nc
 cdo setattribute,air_temp@units="deg_C" -chname,Band1,air_temp -timmean -mergetime tas_decadal_mean_annual_mean_c_cru_TS31_historical_*.nc  tas_mean_annual_mean_c_cru_TS31_historical_1910_2009.nc
+cdo setattribute,air_temp_sd@units="deg_C" -chname,Band1,air_temp_sd -timstd -mergetime tas_decadal_mean_annual_mean_c_cru_TS31_historical_*.nc  tas_std_annual_mean_c_cru_TS31_historical_1910_2009.nc
 cdo setattribute,usurf@units="m",usurf@standard_name="surface_elevation" -chname,Band1,usurf  AKCanada_2km_DEM_mosaic.nc usurf_akcanada_2km_dem.nc
-cdo -O setmisstoc,0 -merge pr_mean_annual_total_mm_cru_TS31_historical_1910_2009.nc tas_mean_annual_mean_c_cru_TS31_historical_1910_2009.nc  usurf_akcanada_2km_dem.nc climate_cru_TS31_historical_1910_2009.nc
+cdo -O setmisstoc,0 -merge pr_mean_annual_total_mm_cru_TS31_historical_1910_2009.nc tas_mean_annual_mean_c_cru_TS31_historical_1910_2009.nc  tas_std_annual_mean_c_cru_TS31_historical_1910_2009.nc usurf_akcanada_2km_dem.nc climate_cru_TS31_historical_1910_2009.nc
 
 
