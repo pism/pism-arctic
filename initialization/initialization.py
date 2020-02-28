@@ -123,7 +123,7 @@ parser.add_argument(
     default="ssa+sia",
 )
 parser.add_argument(
-    "--topg_delta", dest="topg_delta_file", help="end of initialization detla=(topg-topg_initial) file", default=None
+    "--dataset_version", dest="version", choices=["2", "3", "3a"], help="input data set version", default="3a"
 )
 parser.add_argument(
     "--vertical_velocity_approximation",
@@ -147,7 +147,7 @@ parser.add_argument(
     "--ensemble_file",
     dest="ensemble_file",
     help="File that has all combinations for ensemble study",
-    default="../uncertainty_quantification/initialization.csv",
+    default="initialization.csv",
 )
 
 options = parser.parse_args()
@@ -172,11 +172,10 @@ initialstatefile = options.initialstatefile
 grid = options.grid
 hydrology = options.hydrology
 stress_balance = options.stress_balance
-topg_delta_file = options.topg_delta_file
 test_climate_models = options.test_climate_models
 vertical_velocity_approximation = options.vertical_velocity_approximation
 
-ensemble_file = options.ensemble_file
+ensemble_file = "$input_dir/uncertainty_quantification/{}".format(options.ensemble_file)
 
 domain = options.domain
 pism_exec = generate_domain(domain)
@@ -255,7 +254,6 @@ topg_max = 700
 
 rcps = ["paris", "26", "45", "85"]
 std_dev = 4.23
-firn = "ctrl"
 lapse_rate = 6
 bed_deformation = "off"
 
@@ -377,9 +375,6 @@ for n, combination in enumerate(combinations):
                 else:
                     general_params_dict["i"] = regridfile
 
-                if (start == simulation_start_year) and (topg_delta_file is not None):
-                    general_params_dict["topg_delta_file"] = topg_delta_file
-
                 if osize != "custom":
                     general_params_dict["o_size"] = osize
                 else:
@@ -417,11 +412,12 @@ for n, combination in enumerate(combinations):
 
                 density_ice = 910.0
                 climate_parameters = {
-                    "atmosphere_given_file": "../data_sets/climate_forcing/{}".format(climate_file),
-                    "atmosphere_lapse_rate_file": "../data_sets/climate_forcing/{}".format(climate_file),
-                    "lapse_rate_file": "../data_sets/climate_forcing/{}".format(climate_file),
-                    "atmosphere_delta_T_file": "../data_sets/climate_forcing/{}".format(climate_file),
-                    "surface.force_to_thickness_file": pism_dataname,
+                    "atmosphere.elevation_change.file": "../data_sets/climate_forcing/{}".format(climate_file),
+                    "atmosphere.elevation_change.temperature_lapse_rate": temperature_lapse_rate,
+                    "precip_adjustement": "scale",
+                    "atmosphere.precip_exponential_factor_for_temperature": precip_scale_factor,
+                    "atmosphere.delta_T.file": climate_modifier_file,
+                    "atmosphere.precip_scaling.file": climate_modifier_file,
                 }
 
                 if "_MM.nc" not in climate_file:

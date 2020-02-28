@@ -437,7 +437,7 @@ def generate_climate(climate, **kwargs):
             params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
         params_dict["surface"] = "pdd,forcing"
     elif climate in ("paleo"):
-        params_dict["atmosphere"] = "given,lapse_rate,delta_T,paleo_precip"
+        params_dict["atmosphere"] = "given,elevation_change,precip_scaling"
         params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.std_dev"] = 4.23
