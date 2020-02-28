@@ -35,10 +35,18 @@ def generate_domain(domain):
     if domain.lower() in ("arctic"):
         pism_exec = "pismr"
     elif domain.lower() in ("akglaciers"):
-        x_min = -1600000.0
+        x_min = 1600000.0
         x_max = 3600000.0
         y_min = -1920000.0
         y_max = -860000.0
+        pism_exec = """pismr -regional -x_range {x_min},{x_max} -y_range {y_min},{y_max}  -bootstrap -regional.zero_gradient true -regional.no_model_strip 5.0""".format(
+            x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
+        )
+    elif domain.lower() in ("atna"):
+        x_min = 2000000.0
+        x_max = 2800000.0
+        y_min = -1500000.0
+        y_max = -1000000.0
         pism_exec = """pismr -regional -x_range {x_min},{x_max} -y_range {y_min},{y_max}  -bootstrap -regional.zero_gradient true -regional.no_model_strip 5.0""".format(
             x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
         )
@@ -74,6 +82,7 @@ spatial_ts_vars["pdd"] = [
     "dHdt",
     "climatic_mass_balance",
     "diffusivity",
+    "effective_precipitation",
     "ice_mass",
     "ice_surface_temp",
     "mask",
@@ -183,9 +192,9 @@ def generate_grid_description(grid_resolution, domain, restart=False):
         mx_max = 12400
         my_max = 8400
 
-    elif domain.lower() in ("atna"):
+    elif domain.lower() in ("akglaciers"):
 
-        mx_max = 8320
+        mx_max = 2120
         my_max = 4000
 
     elif domain.lower() in ("arctic"):
@@ -196,7 +205,7 @@ def generate_grid_description(grid_resolution, domain, restart=False):
     else:
         print("how did I get here")
 
-    resolution_max = 250
+    resolution_max = 500
 
     accepted_resolutions = (500, 1000, 2000, 5000, 10000)
 

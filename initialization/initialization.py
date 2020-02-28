@@ -126,9 +126,6 @@ parser.add_argument(
     "--topg_delta", dest="topg_delta_file", help="end of initialization detla=(topg-topg_initial) file", default=None
 )
 parser.add_argument(
-    "--dataset_version", dest="version", choices=["2", "3", "3a"], help="input data set version", default="3a"
-)
-parser.add_argument(
     "--vertical_velocity_approximation",
     dest="vertical_velocity_approximation",
     choices=["centered", "upstream"],
@@ -169,7 +166,6 @@ system = options.system
 spatial_ts = options.spatial_ts
 
 calving = options.calving
-climate = "elevation"
 exstep = options.exstep
 float_kill_calve_near_grounding_line = options.float_kill_calve_near_grounding_line
 initialstatefile = options.initialstatefile
@@ -179,20 +175,15 @@ stress_balance = options.stress_balance
 topg_delta_file = options.topg_delta_file
 test_climate_models = options.test_climate_models
 vertical_velocity_approximation = options.vertical_velocity_approximation
-version = options.version
 
 ensemble_file = options.ensemble_file
 
 domain = options.domain
 pism_exec = generate_domain(domain)
 
-
-print(domain)
 if domain.lower() in ("alaska", "ak"):
     pism_dataname = "$input_dir/data_sets/bed_dem/pism_alaska_g{}m.nc".format(grid)
-elif domain.lower() in ("atna"):
-    pism_dataname = "$input_dir/data_sets/bed_dem/pism_atna_g{}m.nc".format(grid)
-elif domain.lower() in ("arctic", "akglaciers"):
+elif domain.lower() in ("arctic", "akglaciers", "atna"):
     pism_dataname = "$input_dir/data_sets/bed_dem/pism_arctic_g{}m.nc".format(grid)
 else:
     print("Domain {} not recognized".format(domain))
@@ -266,7 +257,7 @@ rcps = ["paris", "26", "45", "85"]
 std_dev = 4.23
 firn = "ctrl"
 lapse_rate = 6
-bed_deformation = "ip"
+bed_deformation = "off"
 
 if system == "debug":
     combinations = np.genfromtxt(ensemble_file, dtype=None, encoding=None, delimiter=",", skip_header=1)
@@ -307,7 +298,7 @@ m_sb = None
 
 for n, combination in enumerate(combinations):
 
-    run_id, ppq, sia_e, mbp, climate_file = combination
+    run_id, ppq, sia_e, mbp, climate, climate_file = combination
     bed_deformation = bd_dict[m_bd]
 
     ttphi = "{},{},{},{}".format(phi_min, phi_max, topg_min, topg_max)
@@ -318,8 +309,7 @@ for n, combination in enumerate(combinations):
     except:
         name_options["id"] = "{}".format(str(run_id))
 
-    vversion = "v" + str(version)
-    full_exp_name = "_".join([vversion, "_".join(["_".join([k, str(v)]) for k, v in list(name_options.items())])])
+    full_exp_name = "_".join(["_".join([k, str(v)]) for k, v in list(name_options.items())])
     full_outfile = "{domain}_g{grid}m_{experiment}.nc".format(domain=domain.lower, grid=grid, experiment=full_exp_name)
 
     # All runs in one script file for coarse grids that fit into max walltime
@@ -335,7 +325,6 @@ for n, combination in enumerate(combinations):
 
             experiment = "_".join(
                 [
-                    vversion,
                     "_".join(["_".join([k, str(v)]) for k, v in list(name_options.items())]),
                     "{}".format(start),
                     "{}".format(end),
@@ -426,23 +415,17 @@ for n, combination in enumerate(combinations):
                     stress_balance = sb_dict[m_sb]
                 stress_balance_params_dict = generate_stress_balance(stress_balance, sb_params_dict)
 
-                ice_density = 910.0
-                # climate_parameters = {
-                #     "atmosphere_given_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
-                #     "atmosphere_lapse_rate_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
-                #     "lapse_rate_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
-                #     "pdd_sd_file": "../data_sets/climate_forcing/pism_g5000m_MERRA2_1980_2009_TM.nc",
-                #     "atmosphere_delta_T_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
-                #     "paleo_precip_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
-                #     "atmosphere.precip_exponential_factor_for_temperature": 7.0 / 100,
-                # }
-
+                density_ice = 910.0
                 climate_parameters = {
                     "atmosphere_given_file": "../data_sets/climate_forcing/{}".format(climate_file),
                     "atmosphere_lapse_rate_file": "../data_sets/climate_forcing/{}".format(climate_file),
                     "lapse_rate_file": "../data_sets/climate_forcing/{}".format(climate_file),
                     "atmosphere_delta_T_file": "../data_sets/climate_forcing/{}".format(climate_file),
+                    "surface.force_to_thickness_file": pism_dataname,
                 }
+
+                if "_MM.nc" not in climate_file:
+                    climate_parameters["pdd_sd_file"] = "../data_sets/climate_forcing/{}".format(climate_file)
 
                 climate_params_dict = generate_climate(climate, **climate_parameters)
 
@@ -452,7 +435,6 @@ for n, combination in enumerate(combinations):
 
                 calving_params_dict = generate_calving(calving, **calving_parameters)
 
-                front_retreat_params_dict = {"front_retreat_file": pism_dataname}
                 ocean_params_dict = {
                     "shelf_base_melt_rate": 0.2,
                     "ocean_delta_SL_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",

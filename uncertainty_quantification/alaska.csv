@@ -1,2 +1,7 @@
-id,ppq,siae,mbp,climate_file
-CTRL,0.6,1.5,0,climate_cru_TS31_historical_1910_2009.nc
+id,ppq,siae,mbp,climate,climate_file
+CTRL,0.6,1.5,0,snap_flux,climate_cru_TS31_historical_1910_2009.nc
+E3,0.6,3.0,0,snap_flux,climate_cru_TS31_historical_1910_2009.nc
+RELAX,0.6,1.5,0,snap,climate_cru_TS31_historical_1910_2009.nc
+RELAX-YM,0.6,1.5,0,snap,climate_cru_TS40_historical_1910_2009_YM.nc
+RELAX-MM,0.6,1.5,0,snap,climate_cru_TS40_historical_1910_2009_MM.nc
+RELAX-TM,0.6,1.5,0,snap,climate_cru_TS40_historical_1910_2009_TM.nc
