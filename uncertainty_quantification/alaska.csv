@@ -1,7 +1,7 @@
-id,ppq,siae,mbp,climate,climate_file
-CTRL,0.6,1.5,0,snap_flux,climate_cru_TS31_historical_1910_2009.nc
-E3,0.6,3.0,0,snap_flux,climate_cru_TS31_historical_1910_2009.nc
-RELAX,0.6,1.5,0,snap,climate_cru_TS31_historical_1910_2009.nc
-RELAX-YM,0.6,1.5,0,snap,climate_cru_TS40_historical_1910_2009_YM.nc
-RELAX-MM,0.6,1.5,0,snap,climate_cru_TS40_historical_1910_2009_MM.nc
-RELAX-TM,0.6,1.5,0,snap,climate_cru_TS40_historical_1910_2009_TM.nc
+id,ppq,siae,mbp,temperature_lapse_rate,precip_scale_factor,climate,climate_file,climate_modifier_file
+CTRL,0.6,1.5,0,6,0.07,paleo,climate_cru_TS31_historical_1910_2009.nc,arctic_paleo_modifier.nc
+E3,0.6,3.0,0,6,0.07,paleo,climate_cru_TS31_historical_1910_2009.nc,arctic_paleo_modifier.nc
+RELAX,0.6,1.5,0,6,0.07,paleo,climate_cru_TS31_historical_1910_2009.nc,arctic_paleo_modifier.nc
+RELAX-YM,0.6,1.5,0,6,0.07,paleo,climate_cru_TS40_historical_1910_2009_YM.nc,arctic_paleo_modifier.nc
+RELAX-MM,0.6,1.5,0,6,0.07,paleo,climate_cru_TS40_historical_1910_2009_MM.nc,arctic_paleo_modifier.nc
+RELAX-TM,0.6,1.5,0,6,0.07,paleo,climate_cru_TS40_historical_1910_2009_TM.nc,arctic_paleo_modifier.nc

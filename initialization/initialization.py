@@ -175,7 +175,7 @@ stress_balance = options.stress_balance
 test_climate_models = options.test_climate_models
 vertical_velocity_approximation = options.vertical_velocity_approximation
 
-ensemble_file = "$input_dir/uncertainty_quantification/{}".format(options.ensemble_file)
+ensemble_file = "../uncertainty_quantification/{}".format(options.ensemble_file)
 
 domain = options.domain
 pism_exec = generate_domain(domain)
@@ -296,7 +296,17 @@ m_sb = None
 
 for n, combination in enumerate(combinations):
 
-    run_id, ppq, sia_e, mbp, climate, climate_file = combination
+    (
+        run_id,
+        ppq,
+        sia_e,
+        mbp,
+        temperature_lapse_rate,
+        precip_scale_factor,
+        climate,
+        climate_file,
+        climate_modifier_file,
+    ) = combination
     bed_deformation = bd_dict[m_bd]
 
     ttphi = "{},{},{},{}".format(phi_min, phi_max, topg_min, topg_max)
@@ -419,10 +429,8 @@ for n, combination in enumerate(combinations):
                     "atmosphere.delta_T.file": climate_modifier_file,
                     "atmosphere.precip_scaling.file": climate_modifier_file,
                 }
-
                 if "_MM.nc" not in climate_file:
                     climate_parameters["pdd_sd_file"] = "../data_sets/climate_forcing/{}".format(climate_file)
-
                 climate_params_dict = generate_climate(climate, **climate_parameters)
 
                 hydro_params_dict = generate_hydrology(hydrology)
@@ -433,8 +441,8 @@ for n, combination in enumerate(combinations):
 
                 ocean_params_dict = {
                     "shelf_base_melt_rate": 0.2,
-                    "ocean_delta_SL_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
-                    "ocean_frac_MBP_file": "../data_sets/climate_forcing/arctic_paleo_modifier.nc",
+                    "ocean_delta_SL_file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
+                    "ocean_frac_MBP_file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
                 }
 
                 if mbp == 1:
