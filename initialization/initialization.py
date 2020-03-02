@@ -427,8 +427,8 @@ for n, combination in enumerate(combinations):
                     "atmosphere.elevation_change.temperature_lapse_rate": temperature_lapse_rate,
                     "precip_adjustement": "scale",
                     "atmosphere.precip_exponential_factor_for_temperature": precip_scale_factor,
-                    "atmosphere.delta_T.file": climate_modifier_file,
-                    "atmosphere.precip_scaling.file": climate_modifier_file,
+                    "atmosphere.delta_T.file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
+                    "atmosphere.precip_scaling.file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
                 }
                 if "_MM.nc" not in climate_file:
                     climate_parameters["pdd_sd_file"] = "../data_sets/climate_forcing/{}".format(climate_file)
