@@ -422,6 +422,7 @@ for n, combination in enumerate(combinations):
 
                 density_ice = 910.0
                 climate_parameters = {
+                    "atmosphere.given.file": "../data_sets/climate_forcing/{}".format(climate_file),
                     "atmosphere.elevation_change.file": "../data_sets/climate_forcing/{}".format(climate_file),
                     "atmosphere.elevation_change.temperature_lapse_rate": temperature_lapse_rate,
                     "precip_adjustement": "scale",

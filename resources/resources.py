@@ -423,44 +423,12 @@ def generate_climate(climate, **kwargs):
         params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.std_dev"] = 4.23
-        if "atmosphere_given_file" not in kwargs:
-            params_dict["atmosphere_given_file"] = "climate_cru_TS31_historical_1910_2009.nc"
-        else:
-            params_dict["atmosphere_given_file"] = kwargs["atmosphere_given_file"]
-        if "temp_lapse_rate" not in kwargs:
-            params_dict["temp_lapse_rate"] = 6
-        else:
-            params_dict["temp_lapse_rate"] = kwargs["temp_lapse_rate"]
-        if "atmosphere_lapse_rate_file" not in kwargs:
-            params_dict["atmosphere_lapse_rate_file"] = "climate_cru_TS31_historical_1910_2009.nc"
-        else:
-            params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
         params_dict["surface"] = "pdd,forcing"
     elif climate in ("paleo"):
         params_dict["atmosphere"] = "given,elevation_change,precip_scaling"
         params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.std_dev"] = 4.23
-        if "atmosphere_given_file" not in kwargs:
-            params_dict["atmosphere_given_file"] = "climate_cru_TS31_historical_1910_2009.nc"
-        else:
-            params_dict["atmosphere_given_file"] = kwargs["atmosphere_given_file"]
-        if "temp_lapse_rate" not in kwargs:
-            params_dict["temp_lapse_rate"] = 6
-        else:
-            params_dict["temp_lapse_rate"] = kwargs["temp_lapse_rate"]
-        if "atmosphere_lapse_rate_file" not in kwargs:
-            params_dict["atmosphere_lapse_rate_file"] = "climate_cru_TS31_historical_1910_2009.nc"
-        else:
-            params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
-        if "atmosphere_delta_T_file" not in kwargs:
-            params_dict["atmosphere_delta_T_file"] = "arctic_paleo_modifier.nc"
-        else:
-            params_dict["atmosphere_delta_T_file"] = kwargs["atmosphere_delta_T_file"]
-        if "atmosphere_paleo_precip_file" not in kwargs:
-            params_dict["atmosphere_paleo_precip_file"] = "arctic_paleo_modifier.nc"
-        else:
-            params_dict["atmosphere_paleo_precip_file"] = kwargs["atmosphere_paleo_precip_file"]
         params_dict["surface"] = "pdd"
     else:
         print(("climate {} not recognized, exiting".format(climate)))
