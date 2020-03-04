@@ -23,7 +23,7 @@ CUT="-dstnodata 0 -cutline  ../shape_files/no-model-domain.shp"
 
 grid=1000
 
-gdalwarp $optionsbil -dstnodata -9999 -s_srs EPSG:4326 -t_srs EPSG:${epsg} -te $x_min $y_min $x_max $y_max  -tr $grid $grid cut_GEBCO_2019.nc ${domain}_g${grid}m.tif
+# gdalwarp $optionsbil -dstnodata -9999 -s_srs EPSG:4326 -t_srs EPSG:${epsg} -te $x_min $y_min $x_max $y_max  -tr $grid $grid cut_GEBCO_2019.nc ${domain}_g${grid}m.tif
 
 for grid in 500 1000 2000 5000 10000 20000 40000; do
     
@@ -47,6 +47,12 @@ for grid in 500 1000 2000 5000 10000 20000 40000; do
     # Generate bed and ice thickness
     ncap2 -O -s "thickness=arctic_thickness+gris_thickness; topg=surface-thickness; ftt_mask=topg*0 + 1; where(thickness<0) {thickness=0;};"  pism_${domain}_g${grid}m.nc  pism_${domain}_g${grid}m.nc
     ncatted  -a standard_name,ftt_mask,d,, -a standard_name,topg,o,c,"bedrock_altitude" -a standard_name,thickness,o,c,"land_ice_thickness" -a _FillValue,topg,d,, -a _FillValue,thickness,d,, -a units,thickness,o,c,"m" -a units,topg,o,c,"m" -a units,surface,o,c,"m" -a units,ftt_mask,d,, pism_${domain}_g${grid}m.nc
+
+    gdalwarp $options -dstnodata 1 -cutline ../shape_files/akglaciers-domain.shp ${domain}_g${grid}m_thickness.nc  ${domain}_g${grid}m_akglaciers_mask.nc
+    ncatted -a _FillValue,Band1,d,,  ${domain}_g${grid}m_akglaciers_mask.nc
+    ncap2 -O -s "ftt_mask=Band1*0; where(Band1==1) ftt_mask=1; thickness=Band1*0;"  ${domain}_g${grid}m_akglaciers_mask.nc  ${domain}_g${grid}m_akglaciers_mask.nc
+    ncatted  -a units,thickness,o,c,"m" -a standard_name,thickness,o,c,"land_ice_thickness"  ${domain}_g${grid}m_akglaciers_mask.nc
+    ncks -O -v ftt_mask,thickness ${domain}_g${grid}m_akglaciers_mask.nc ${domain}_g${grid}m_akglaciers_mask.nc
 done
 
 x_min=1600000.0
@@ -54,4 +60,4 @@ x_max=3600000.0
 y_min=-1920000.0
 y_max=-860000.0
 
-gdal_translate -projwin $x_min $y_max $x_max $y_min ${icethicknessdir}/RGI60-merged_EPSG_${epsg}.vrt akglaciersRGI60-merged_EPSG_${epsg}.vrt 
+# gdal_translate -projwin $x_min $y_max $x_max $y_min ${icethicknessdir}/RGI60-merged_EPSG_${epsg}.vrt akglaciersRGI60-merged_EPSG_${epsg}.vrt 
