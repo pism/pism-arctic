@@ -64,11 +64,13 @@ spatial_ts_vars["basic"] = [
     "bwat",
     "dHdt",
     "climatic_mass_balance",
+    "effective_precipitation",
     "diffusivity",
     "ice_mass",
     "ice_surface_temp",
     "mask",
     "mass_fluxes",
+    "pdd_fluxes",
     "sftgif",
     "thk",
     "topg",
@@ -321,7 +323,8 @@ def generate_stress_balance(stress_balance, additional_params_dict):
         params_dict["part_redist"] = ""
         params_dict["sia_flow_law"] = "gpbld"
         params_dict["pseudo_plastic"] = ""
-        params_dict["tauc_slippery_grounding_lines"] = ""
+        params_dict["tauc_slippery_grounding_lines"] = "false"
+        params_dict["stress_balance.ssa.fd.max_speed"] = 10000.0e3
 
     return merge_dicts(additional_params_dict, params_dict)
 
@@ -425,11 +428,10 @@ def generate_climate(climate, **kwargs):
         params_dict["surface.pdd.std_dev"] = 4.23
         params_dict["surface"] = "pdd,forcing"
     elif climate in ("paleo"):
-        params_dict["atmosphere"] = "given,elevation_change,precip_scaling"
-        params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
-        params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
-        params_dict["surface.pdd.std_dev"] = 4.23
-        params_dict["surface"] = "pdd"
+        params_dict["atmosphere"] = "given,elevation_change,delta_T,precip_scaling"
+        params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Shea et al (2009)
+        params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Shea et al (2009)
+        params_dict["surface"] = "pdd,forcing"
     else:
         print(("climate {} not recognized, exiting".format(climate)))
         import sys
