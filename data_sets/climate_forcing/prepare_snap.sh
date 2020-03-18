@@ -42,5 +42,5 @@ cdo setattribute,air_temp@units="deg_C" -chname,Band1,air_temp -mergetime tas/ta
 cdo setattribute,usurf@units="m",usurf@standard_name="surface_elevation" -chname,Band1,usurf  AKCanada_2km_DEM_mosaic.nc usurf_akcanada_2km_dem.nc
 cdo -O -f nc4 -z zip_3 setmisstoc,0 -merge usurf_akcanada_2km_dem.nc pr_total_mm_CRU_TS40_historical_1910_2015_MM.nc tas/tas_mean_C_CRU_TS40_historical_1910_2015_MM.nc climate_cru_TS40_historical_1910_2009_MM.nc
 adjust_timeline.py -a 1910-1-1 -d 1910-1-1 -p monthly climate_cru_TS40_historical_1910_2009_MM.nc
-cdo -O -f nc4 -z zip_3 merge -yearstd -chname,air_temp,air_temp_sd -selvar,air_temp climate_cru_TS40_historical_1910_2009_MM.nc -yearmean -selvar,air_temp,usurf climate_cru_TS40_historical_1910_2009_MM.nc -yearsum -selvar,precipitation climate_cru_TS40_historical_1910_2009_MM.nc climate_cru_TS40_historical_1910_2009_YM.nc
+cdo -O -f nc4 -z zip_3 merge -setattribute,air_temp_sd@units="K" -yearstd -chname,air_temp,air_temp_sd -selvar,air_temp climate_cru_TS40_historical_1910_2009_MM.nc -yearmean -selvar,air_temp,usurf climate_cru_TS40_historical_1910_2009_MM.nc -yearsum -selvar,precipitation climate_cru_TS40_historical_1910_2009_MM.nc climate_cru_TS40_historical_1910_2009_YM.nc
 cdo -O -f nc4 -z zip_3 timmean climate_cru_TS40_historical_1910_2009_YM.nc  climate_cru_TS40_historical_1910_2009_TM.nc
