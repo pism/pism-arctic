@@ -65,7 +65,7 @@ parser.add_argument(
     "-d",
     "--domain",
     dest="domain",
-    choices=["akglaciers", "arctic"],
+    choices=["akglaciers", "arctic", "atna"],
     help="sets the modeling domain",
     default="arctic",
 )
@@ -121,9 +121,6 @@ parser.add_argument(
     choices=["sia", "ssa+sia", "ssa"],
     help="stress balance solver",
     default="ssa+sia",
-)
-parser.add_argument(
-    "--dataset_version", dest="version", choices=["2", "3", "3a"], help="input data set version", default="3a"
 )
 parser.add_argument(
     "--vertical_velocity_approximation",
@@ -421,17 +418,18 @@ for n, combination in enumerate(combinations):
                 stress_balance_params_dict = generate_stress_balance(stress_balance, sb_params_dict)
 
                 density_ice = 910.0
+                flux_adjustment_file = "arctic_g{}m_akglaciers_mask.nc".format(grid)
                 climate_parameters = {
                     "atmosphere.given.file": "../data_sets/climate_forcing/{}".format(climate_file),
                     "atmosphere.elevation_change.file": "../data_sets/climate_forcing/{}".format(climate_file),
                     "atmosphere.elevation_change.temperature_lapse_rate": temperature_lapse_rate,
-                    "precip_adjustement": "scale",
                     "atmosphere.precip_exponential_factor_for_temperature": precip_scale_factor,
                     "atmosphere.delta_T.file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
                     "atmosphere.precip_scaling.file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
+                    "precip_adjustement": "scale",
+                    "surface.force_to_thickness_file": "../data_sets/bed_dem/{}".format(flux_adjustment_file),
                 }
-                if "_MM.nc" not in climate_file:
-                    climate_parameters["pdd_sd_file"] = "../data_sets/climate_forcing/{}".format(climate_file)
+                climate_parameters["pdd_sd_file"] = "../data_sets/climate_forcing/{}".format(climate_file)
                 climate_params_dict = generate_climate(climate, **climate_parameters)
 
                 hydro_params_dict = generate_hydrology(hydrology)
@@ -487,10 +485,30 @@ for n, combination in enumerate(combinations):
 
                 f.write(cmd)
                 f.write("\n")
+                f.write("\n")
+                f.write("ncks -O -4 -L 3 {ofile} {ofile}\n".format(ofile=join(dirs["state"], outfile)))
+                f.write("\n")
+                if not spatial_ts == "none":
+                    f.write(
+                        "ncks -O -4 -L 3 {tmpfile} {ofile}\n".format(
+                            tmpfile=spatial_ts_dict["extra_file"], ofile=join(dirs["spatial"], "ex_" + outfile)
+                        )
+                    )
+                    f.write("\n")
                 f.write(batch_system.get("footer", ""))
 
                 f_combined.write(cmd)
                 f_combined.write("\n\n")
+                f.write("\n")
+                f.write("ncks -O -4 -L 3 {ofile} {ofile}\n".format(ofile=join(dirs["state"], outfile)))
+                f.write("\n")
+                if not spatial_ts == "none":
+                    f.write(
+                        "ncks -O -4 -L 3 {tmpfile} {ofile}\n".format(
+                            tmpfile=spatial_ts_dict["extra_file"], ofile=join(dirs["spatial"], "ex_" + outfile)
+                        )
+                    )
+                    f.write("\n")
 
                 regridfile = join(dirs["state"], outfile)
                 outfiles.append(outfile)
