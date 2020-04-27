@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # Copyright (C) 2016-19 Andy Aschwanden
 
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import itertools
 from collections import OrderedDict
 import numpy as np
 import os
-import sys
 import shlex
 from os.path import join, abspath, realpath, dirname
 
@@ -13,9 +13,9 @@ try:
     import subprocess32 as sub
 except:
     import subprocess as sub
-
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import sys
+
+# from pism_utilities import batch_script
 
 
 def current_script_directory():
@@ -250,9 +250,10 @@ topg_min = -700
 topg_max = 700
 
 rcps = ["paris", "26", "45", "85"]
-std_dev = 4.23
+pdd_std_dev = 4.23
 lapse_rate = 6
 bed_deformation = "off"
+ice_density = 910.0
 
 if system == "debug":
     combinations = np.genfromtxt(ensemble_file, dtype=None, encoding=None, delimiter=",", skip_header=1)
@@ -261,6 +262,7 @@ else:
 
 m_bd = 0.0
 bd_dict = {-1.0: "off", 0.0: "i0", 1.0: "ip"}
+
 
 tsstep = "yearly"
 
@@ -300,6 +302,8 @@ for n, combination in enumerate(combinations):
         mbp,
         temperature_lapse_rate,
         precip_scale_factor,
+        pdd_factor_ice,
+        pdd_factor_snow,
         climate,
         climate_file,
         climate_modifier_file,
@@ -418,18 +422,25 @@ for n, combination in enumerate(combinations):
                 stress_balance_params_dict = generate_stress_balance(stress_balance, sb_params_dict)
 
                 density_ice = 910.0
-                flux_adjustment_file = "arctic_g{}m_akglaciers_mask.nc".format(grid)
+                flux_adjustment_file = "$input_dir/data_sets/bed_dem/arctic_g{}m_akglaciers_mask.nc".format(grid)
+                # flux_adjustment_file = pism_dataname
                 climate_parameters = {
-                    "atmosphere.given.file": "../data_sets/climate_forcing/{}".format(climate_file),
-                    "atmosphere.elevation_change.file": "../data_sets/climate_forcing/{}".format(climate_file),
+                    "atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(climate_file),
+                    "atmosphere.elevation_change.file": "$input_dir/data_sets/climate_forcing/{}".format(climate_file),
                     "atmosphere.elevation_change.temperature_lapse_rate": temperature_lapse_rate,
                     "atmosphere.precip_exponential_factor_for_temperature": precip_scale_factor,
-                    "atmosphere.delta_T.file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
-                    "atmosphere.precip_scaling.file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
+                    "atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(climate_modifier_file),
+                    "atmosphere.precip_scaling.file": "$input_dir/data_sets/climate_forcing/{}".format(
+                        climate_modifier_file
+                    ),
                     "precip_adjustement": "scale",
-                    "surface.force_to_thickness_file": "../data_sets/bed_dem/{}".format(flux_adjustment_file),
+                    "surface.force_to_thickness_file": flux_adjustment_file,
+                    "surface.pdd.factor_ice": pdd_factor_ice / ice_density,
+                    "surface.pdd.factor_snow": pdd_factor_snow / ice_density,
+
                 }
-                climate_parameters["pdd_sd_file"] = "../data_sets/climate_forcing/{}".format(climate_file)
+#                 climate_parameters["surface.pdd.std_dev"] = pdd_std_dev
+                climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)
                 climate_params_dict = generate_climate(climate, **climate_parameters)
 
                 hydro_params_dict = generate_hydrology(hydrology)
@@ -440,8 +451,8 @@ for n, combination in enumerate(combinations):
 
                 ocean_params_dict = {
                     "shelf_base_melt_rate": 0.2,
-                    "ocean_delta_SL_file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
-                    "ocean_frac_MBP_file": "../data_sets/climate_forcing/{}".format(climate_modifier_file),
+                    "ocean_delta_SL_file": "$input_dir/data_sets/climate_forcing/{}".format(climate_modifier_file),
+                    "ocean_frac_MBP_file": "$input_dir/data_sets/climate_forcing/{}".format(climate_modifier_file),
                 }
 
                 if mbp == 1:
@@ -486,11 +497,11 @@ for n, combination in enumerate(combinations):
                 f.write(cmd)
                 f.write("\n")
                 f.write("\n")
-                f.write("ncks -O -4 -L 3 {ofile} {ofile}\n".format(ofile=join(dirs["state"], outfile)))
+                f.write("ncks -O -4 -L 2 {ofile} {ofile}\n".format(ofile=join(dirs["state"], outfile)))
                 f.write("\n")
                 if not spatial_ts == "none":
                     f.write(
-                        "ncks -O -4 -L 3 {tmpfile} {ofile}\n".format(
+                        "ncks -O -4 -L 2 {tmpfile} {ofile}\n".format(
                             tmpfile=spatial_ts_dict["extra_file"], ofile=join(dirs["spatial"], "ex_" + outfile)
                         )
                     )
@@ -499,16 +510,16 @@ for n, combination in enumerate(combinations):
 
                 f_combined.write(cmd)
                 f_combined.write("\n\n")
-                f.write("\n")
-                f.write("ncks -O -4 -L 3 {ofile} {ofile}\n".format(ofile=join(dirs["state"], outfile)))
-                f.write("\n")
+                f_combined.write("\n")
+                f_combined.write("ncks -O -4 -L 2 {ofile} {ofile}\n".format(ofile=join(dirs["state"], outfile)))
+                f_combined.write("\n")
                 if not spatial_ts == "none":
-                    f.write(
-                        "ncks -O -4 -L 3 {tmpfile} {ofile}\n".format(
+                    f_combined.write(
+                        "ncks -O -4 -L 2 {tmpfile} {ofile}\n".format(
                             tmpfile=spatial_ts_dict["extra_file"], ofile=join(dirs["spatial"], "ex_" + outfile)
                         )
                     )
-                    f.write("\n")
+                    f_combined.write("\n")
 
                 regridfile = join(dirs["state"], outfile)
                 outfiles.append(outfile)

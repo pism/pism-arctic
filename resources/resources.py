@@ -64,6 +64,7 @@ spatial_ts_vars["basic"] = [
     "bwat",
     "dHdt",
     "climatic_mass_balance",
+    "effective_air_temp",
     "effective_precipitation",
     "diffusivity",
     "ice_mass",
@@ -421,16 +422,12 @@ def generate_climate(climate, **kwargs):
         else:
             params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
         params_dict["surface"] = "pdd"
-    elif climate in ("snap_flux"):
-        params_dict["atmosphere"] = "given,lapse_rate"
-        params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
-        params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
+    elif climate in ("present"):
+        params_dict["atmosphere"] = "given"
         params_dict["surface.pdd.std_dev"] = 4.23
         params_dict["surface"] = "pdd,forcing"
     elif climate in ("paleo"):
         params_dict["atmosphere"] = "given,elevation_change,delta_T,precip_scaling"
-        params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Shea et al (2009)
-        params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Shea et al (2009)
         params_dict["surface"] = "pdd,forcing"
     else:
         print(("climate {} not recognized, exiting".format(climate)))
