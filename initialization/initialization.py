@@ -177,12 +177,7 @@ ensemble_file = "../uncertainty_quantification/{}".format(options.ensemble_file)
 domain = options.domain
 pism_exec = generate_domain(domain)
 
-if domain.lower() in ("alaska", "ak"):
-    pism_dataname = "$input_dir/data_sets/bed_dem/pism_alaska_g{}m.nc".format(grid)
-elif domain.lower() in ("arctic", "akglaciers", "atna"):
-    pism_dataname = "$input_dir/data_sets/bed_dem/pism_arctic_g{}m.nc".format(grid)
-else:
-    print("Domain {} not recognized".format(domain))
+pism_dataname = "$input_dir/data_sets/bed_dem/pism_{}_g{}m.nc".format(domain, grid)
 
 regridvars = "litho_temp,enthalpy,age,tillwat,bmelt,ice_area_specific_volume,thk"
 
