@@ -417,7 +417,7 @@ for n, combination in enumerate(combinations):
                 stress_balance_params_dict = generate_stress_balance(stress_balance, sb_params_dict)
 
                 density_ice = 910.0
-                flux_adjustment_file = "$input_dir/data_sets/bed_dem/{domain}_g{}m_akglaciers_mask.nc".format(domain, grid)
+                flux_adjustment_file = "$input_dir/data_sets/bed_dem/{}_g{}m_akglaciers_mask.nc".format(domain, grid)
                 # flux_adjustment_file = pism_dataname
                 climate_parameters = {
                     "atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(climate_file),
