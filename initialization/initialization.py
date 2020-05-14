@@ -432,9 +432,8 @@ for n, combination in enumerate(combinations):
                     "surface.force_to_thickness_file": flux_adjustment_file,
                     "surface.pdd.factor_ice": pdd_factor_ice / ice_density,
                     "surface.pdd.factor_snow": pdd_factor_snow / ice_density,
-
                 }
-#                 climate_parameters["surface.pdd.std_dev"] = pdd_std_dev
+                #                 climate_parameters["surface.pdd.std_dev"] = pdd_std_dev
                 climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)
                 climate_params_dict = generate_climate(climate, **climate_parameters)
 
