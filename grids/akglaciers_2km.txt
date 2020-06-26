@@ -1,0 +1,19 @@
+gridtype = projection
+xsize = 2000
+ysize = 530
+xunits = "meters"
+yunits = "meters"
+xfirst = 1601000
+xinc = 2000.
+yfirst = -1919000
+yinc = 2000.0
+grid_mapping_name = "polar_stereographic"
+straight_vertical_longitude_from_pole = -150.
+false_easting = 2000000.
+false_northing = 2000000.
+latitude_of_projection_origin = 90.
+standard_parallel = 90.
+longitude_of_prime_meridian = 0.
+semi_major_axis = 6378137.
+inverse_flattening = 298.257223563
+
