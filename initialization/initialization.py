@@ -99,7 +99,7 @@ parser.add_argument(
     default="pleiades_broadwell",
 )
 parser.add_argument(
-    "--spatial_ts", dest="spatial_ts", choices=["basic", "pdd"], help="output size type", default="basic"
+    "--spatial_ts", dest="spatial_ts", choices=["basic", "medium", "pdd"], help="output size type", default="basic"
 )
 parser.add_argument(
     "--hydrology",
@@ -245,7 +245,6 @@ topg_min = -700
 topg_max = 700
 
 rcps = ["paris", "26", "45", "85"]
-pdd_std_dev = 4.23
 lapse_rate = 6
 bed_deformation = "off"
 ice_density = 910.0
@@ -299,9 +298,11 @@ for n, combination in enumerate(combinations):
         precip_scale_factor,
         pdd_factor_ice,
         pdd_factor_snow,
+        pdd_std_dev,
         climate,
         climate_file,
         climate_modifier_file,
+        anomaly_file,
     ) = combination
     bed_deformation = bd_dict[m_bd]
 
@@ -420,21 +421,17 @@ for n, combination in enumerate(combinations):
                 flux_adjustment_file = "$input_dir/data_sets/bed_dem/{}_g{}m_akglaciers_mask.nc".format(domain, grid)
                 # flux_adjustment_file = pism_dataname
                 climate_parameters = {
+                    "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(anomaly_file),
                     "atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(climate_file),
+                    "atmosphere_given_period": 1,
                     "atmosphere.elevation_change.file": "$input_dir/data_sets/climate_forcing/{}".format(climate_file),
                     "atmosphere.elevation_change.temperature_lapse_rate": temperature_lapse_rate,
-                    "atmosphere.precip_exponential_factor_for_temperature": precip_scale_factor,
-                    "atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(climate_modifier_file),
-                    "atmosphere.precip_scaling.file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        climate_modifier_file
-                    ),
-                    "precip_adjustement": "scale",
                     "surface.force_to_thickness_file": flux_adjustment_file,
                     "surface.pdd.factor_ice": pdd_factor_ice / ice_density,
                     "surface.pdd.factor_snow": pdd_factor_snow / ice_density,
                 }
-                #                 climate_parameters["surface.pdd.std_dev"] = pdd_std_dev
-                climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)
+                climate_parameters["surface.pdd.std_dev"] = pdd_std_dev
+                # climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)
                 climate_params_dict = generate_climate(climate, **climate_parameters)
 
                 hydro_params_dict = generate_hydrology(hydrology)

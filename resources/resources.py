@@ -60,6 +60,29 @@ def generate_domain(domain):
 
 spatial_ts_vars = {}
 
+
+spatial_ts_vars["medium"] = [
+    "bwat",
+    "dHdt",
+    "climatic_mass_balance",
+    "effective_air_temp",
+    "effective_precipitation",
+    "diffusivity",
+    "ice_mass",
+    "ice_surface_temp",
+    "mask",
+    "mass_fluxes",
+    "pdd_fluxes",
+    "sftgif",
+    "thk",
+    "topg",
+    "usurf",
+    "velsurf",
+    "velbase_mag",
+    "velsurf_mag",
+]
+
+
 spatial_ts_vars["basic"] = [
     "bwat",
     "dHdt",
@@ -125,7 +148,7 @@ def generate_spatial_ts(outfile, exvars, step, start=None, end=None, split=None,
     if odir is None:
         params_dict["extra_file"] = "ex_" + outfile
     else:
-        params_dict["extra_file"] = os.path.join(odir, "ex_" + outfile)
+        params_dict["extra_file"] = os.path.join(odir, "ex_" + step + "_" + outfile)
     params_dict["extra_vars"] = exvars
 
     if step is None:
@@ -152,7 +175,7 @@ def generate_scalar_ts(outfile, step, odir=None, **kwargs):
     if odir is None:
         params_dict["ts_file"] = "ts_" + outfile
     else:
-        params_dict["ts_file"] = os.path.join(odir, "ts_" + outfile)
+        params_dict["ts_file"] = os.path.join(odir, "ts_" + step + "_" + outfile)
 
     if step is None:
         step = "yearly"
@@ -424,10 +447,10 @@ def generate_climate(climate, **kwargs):
         params_dict["surface"] = "pdd"
     elif climate in ("present"):
         params_dict["atmosphere"] = "given"
-        params_dict["surface.pdd.std_dev"] = 4.23
         params_dict["surface"] = "pdd,forcing"
     elif climate in ("paleo"):
-        params_dict["atmosphere"] = "given,elevation_change,delta_T,precip_scaling"
+        params_dict["atmosphere"] = "given,anomaly"
+        params_dict["atmosphere_anomaly_period"] = 1
         params_dict["surface"] = "pdd,forcing"
     else:
         print(("climate {} not recognized, exiting".format(climate)))
