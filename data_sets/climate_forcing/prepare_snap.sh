@@ -56,8 +56,12 @@ cdo setattribute,usurf@units="m",usurf@standard_name="surface_elevation" -chname
 
 cdo -O -f nc4 -z zip_3 setmisstoc,0 -merge usurf_akcanada_2km_dem_${domain}.nc -selyear,${start_year}/${end_year} pr_total_mm_CRU_TS40_historical_${start_year}_${end_year}_${domain}_MM.nc  -selyear,${start_year}/${end_year} tas_mean_C_CRU_TS40_historical_${start_year}_${end_year}_${domain}_MM.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc
 adjust_timeline.py -a ${start_year}-1-1 -d ${start_year}-1-1 -p monthly ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc
+
 cdo -O -f nc4 -z zip_1 merge usurf_akcanada_2km_dem_${domain}.nc -selvar,precipitation,air_temp -ymonmean ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM.nc
 adjust_timeline.py -a 1992-1-1 -d 1992-1-1 -p monthly  ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM.nc
+
+cdo -O -f nc4 -z zip_1 yseasmean ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YSM.nc
+
 
 cdo -O -f nc4 -z zip_3 timmean -selyear,${start_year}/${end_year} ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc  ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_TM.nc
 
