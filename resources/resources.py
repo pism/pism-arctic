@@ -103,6 +103,18 @@ spatial_ts_vars["basic"] = [
     "velsurf_mag",
 ]
 
+spatial_ts_vars["climate_testing"] = [
+    "climatic_mass_balance",
+    "effective_air_temp",
+    "effective_precipitation",
+    "ice_surface_temp",
+    "mask",
+    "mass_fluxes",
+    "pdd_fluxes",
+    "sftgif",
+]
+
+
 spatial_ts_vars["pdd"] = [
     "bwat",
     "dHdt",
@@ -446,7 +458,7 @@ def generate_climate(climate, **kwargs):
             params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
         params_dict["surface"] = "pdd"
     elif climate in ("present"):
-        params_dict["atmosphere"] = "given"
+        params_dict["atmosphere"] = "given,elevation_change"
         params_dict["surface"] = "pdd,forcing"
     elif climate in ("paleo"):
         params_dict["atmosphere"] = "given,anomaly"

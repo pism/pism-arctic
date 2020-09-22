@@ -74,9 +74,9 @@ parser.add_argument(
     "-f",
     "--o_format",
     dest="oformat",
-    choices=["netcdf3", "netcdf4_parallel", "pnetcdf"],
+    choices=["netcdf3", "netcdf4_parallel", "netcdf4_serial", "pnetcdf"],
     help="output format",
-    default="netcdf4_parallel",
+    default="netcdf4_serial",
 )
 parser.add_argument(
     "-g", "--grid", dest="grid", type=int, choices=grid_choices, help="horizontal grid resolution", default=10000
@@ -99,7 +99,11 @@ parser.add_argument(
     default="pleiades_broadwell",
 )
 parser.add_argument(
-    "--spatial_ts", dest="spatial_ts", choices=["basic", "medium", "pdd"], help="output size type", default="basic"
+    "--spatial_ts",
+    dest="spatial_ts",
+    choices=["basic", "medium", "pdd", "climate_testing"],
+    help="output size type",
+    default="basic",
 )
 parser.add_argument(
     "--hydrology",
@@ -146,6 +150,13 @@ parser.add_argument(
     help="File that has all combinations for ensemble study",
     default="initialization.csv",
 )
+parser.add_argument(
+    "-L",
+    "--comp_level",
+    dest="compression_level",
+    help="Compression level for output file. Only works with netcdf4_serial.",
+    default=2,
+)
 
 options = parser.parse_args()
 
@@ -155,6 +166,7 @@ output_dir = abspath(options.output_dir)
 spatial_tmp_dir = abspath(options.output_dir + "_tmp")
 
 oformat = options.oformat
+compression_level = options.compression_level
 osize = options.osize
 queue = options.queue
 walltime = options.walltime
@@ -246,7 +258,6 @@ topg_max = 700
 
 rcps = ["paris", "26", "45", "85"]
 lapse_rate = 6
-bed_deformation = "off"
 ice_density = 910.0
 
 if system == "debug":
@@ -286,6 +297,7 @@ batch_header, batch_system = make_batch_header(system, nn, walltime, queue)
 post_header = make_batch_post_header(system)
 
 m_sb = None
+mbp = 0
 
 for n, combination in enumerate(combinations):
 
@@ -293,9 +305,8 @@ for n, combination in enumerate(combinations):
         run_id,
         ppq,
         sia_e,
-        mbp,
         temperature_lapse_rate,
-        precip_scale_factor,
+        refreeze_factor,
         pdd_factor_ice,
         pdd_factor_snow,
         pdd_std_dev,
@@ -367,9 +378,11 @@ for n, combination in enumerate(combinations):
                     "climate_forcing_buffer_size": 365,
                     "o": join(dirs["state"], outfile),
                     "o_format": oformat,
+                    "output.compression_level": compression_level,
                     "config_override": "$config",
                 }
-
+                if test_climate_models:
+                    general_params_dict["test_climate_models"] = ""
                 if start == simulation_start_year:
                     if initialstatefile is None:
                         general_params_dict["bootstrap"] = ""
@@ -429,6 +442,7 @@ for n, combination in enumerate(combinations):
                     "surface.force_to_thickness_file": flux_adjustment_file,
                     "surface.pdd.factor_ice": pdd_factor_ice / ice_density,
                     "surface.pdd.factor_snow": pdd_factor_snow / ice_density,
+                    "surface.pdd.refreeze": refreeze_factor,
                 }
                 climate_parameters["surface.pdd.std_dev"] = pdd_std_dev
                 # climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)
@@ -488,11 +502,10 @@ for n, combination in enumerate(combinations):
                 f.write(cmd)
                 f.write("\n")
                 f.write("\n")
-                f.write("ncks -O -4 -L 2 {ofile} {ofile}\n".format(ofile=join(dirs["state"], outfile)))
                 f.write("\n")
                 if not spatial_ts == "none":
                     f.write(
-                        "ncks -O -4 -L 2 {tmpfile} {ofile}\n".format(
+                        "mv {tmpfile} {ofile}\n".format(
                             tmpfile=spatial_ts_dict["extra_file"], ofile=join(dirs["spatial"], "ex_" + outfile)
                         )
                     )
@@ -502,11 +515,10 @@ for n, combination in enumerate(combinations):
                 f_combined.write(cmd)
                 f_combined.write("\n\n")
                 f_combined.write("\n")
-                f_combined.write("ncks -O -4 -L 2 {ofile} {ofile}\n".format(ofile=join(dirs["state"], outfile)))
                 f_combined.write("\n")
                 if not spatial_ts == "none":
                     f_combined.write(
-                        "ncks -O -4 -L 2 {tmpfile} {ofile}\n".format(
+                        "mv {tmpfile} {ofile}\n".format(
                             tmpfile=spatial_ts_dict["extra_file"], ofile=join(dirs["spatial"], "ex_" + outfile)
                         )
                     )
