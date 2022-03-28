@@ -24,6 +24,14 @@ odir=2020_09_def
 python run_akglaciers.py -e alaska_present_def.csv -s chinook -w 1:00:00 -q t2small --spatial_ts climate_testing --test_climate_models --domain akglaciers -g ${grid} -n ${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep yearly
 
 
+n=48
+grid=500
+duration=1
+odir=2020_09_def_nofreeze
+
+python run_akglaciers.py -e alaska_present_def.csv -s chinook -w 1:00:00 -q t2small --spatial_ts climate_testing --test_climate_models --domain akglaciers -g ${grid} -n ${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep yearly
+
+
 n=72
 grid=5000
 duration=20000

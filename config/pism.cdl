@@ -14,7 +14,7 @@ netcdf pism_overrides {
 
     pism_overrides:surface.pdd.refreeze = 0.47;
 
-    pism_overrides:surface.pdd.refreeze_ice_melt = "yes";
+    pism_overrides:surface.pdd.refreeze_ice_melt = "no";
 
     pism_overrides:run_info.institution = "University of Alaska Fairbanks";
     pism_overrides:run_info.institution_doc = "Institution name. This string is written to output files as the 'institution' global attribute.";

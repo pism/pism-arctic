@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (C) 2016-19 Andy Aschwanden
+# Copyright (C) 2016-22 Andy Aschwanden
 
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import itertools
@@ -8,6 +8,8 @@ import numpy as np
 import os
 import shlex
 from os.path import join, abspath, realpath, dirname
+
+import pandas as pd
 
 try:
     import subprocess32 as sub
@@ -67,7 +69,7 @@ parser.add_argument(
     dest="domain",
     choices=["akglaciers", "arctic", "atna"],
     help="sets the modeling domain",
-    default="arctic",
+    default="akglaciers",
 )
 parser.add_argument("--exstep", dest="exstep", help="Writing interval for spatial time series", default=1)
 parser.add_argument(
@@ -189,7 +191,7 @@ ensemble_file = "../uncertainty_quantification/{}".format(options.ensemble_file)
 domain = options.domain
 pism_exec = generate_domain(domain)
 
-pism_dataname = "$input_dir/data_sets/bed_dem/pism_{}_g{}m.nc".format(domain, grid)
+pism_dataname = "$input_dir/data_sets/bed_dem/pism_{}_v2022_g{}m.nc".format(domain, grid)
 
 regridvars = "litho_temp,enthalpy,age,tillwat,bmelt,ice_area_specific_volume,thk"
 
@@ -260,10 +262,8 @@ rcps = ["paris", "26", "45", "85"]
 lapse_rate = 6
 ice_density = 910.0
 
-if system == "debug":
-    combinations = np.genfromtxt(ensemble_file, dtype=None, encoding=None, delimiter=",", skip_header=1)
-else:
-    combinations = np.genfromtxt(ensemble_file, dtype=None, delimiter=",", skip_header=1)
+uq_df = pd.read_csv(ensemble_file)
+uq_df.fillna(False, inplace=True)
 
 m_bd = 0.0
 bd_dict = {-1.0: "off", 0.0: "i0", 1.0: "ip"}
@@ -299,31 +299,19 @@ post_header = make_batch_post_header(system)
 m_sb = None
 mbp = 0
 
-for n, combination in enumerate(combinations):
+for n, row in enumerate(uq_df.iterrows()):
+    combination = row[1]
+    print(combination)
 
-    (
-        run_id,
-        ppq,
-        sia_e,
-        temperature_lapse_rate,
-        refreeze_factor,
-        pdd_factor_ice,
-        pdd_factor_snow,
-        pdd_std_dev,
-        climate,
-        climate_file,
-        climate_modifier_file,
-        anomaly_file,
-    ) = combination
     bed_deformation = bd_dict[m_bd]
 
     ttphi = "{},{},{},{}".format(phi_min, phi_max, topg_min, topg_max)
 
     name_options = {}
     try:
-        name_options["id"] = "{:d}".format(int(run_id))
+        name_options["id"] = int(combination["id"])
     except:
-        name_options["id"] = "{}".format(str(run_id))
+        name_options["id"] = combination["id"]
 
     full_exp_name = "_".join(["_".join([k, str(v)]) for k, v in list(name_options.items())])
     full_outfile = "{domain}_g{grid}m_{experiment}.nc".format(domain=domain.lower, grid=grid, experiment=full_exp_name)
@@ -375,7 +363,8 @@ for n, combination in enumerate(combinations):
                     "ys": start,
                     "ye": end,
                     "calendar": "365_day",
-                    "climate_forcing_buffer_size": 365,
+                    "climate_forcing_buffer_size": 13,
+                    "input.forcing.time_extrapolation": True,
                     "o": join(dirs["state"], outfile),
                     "o_format": oformat,
                     "output.compression_level": compression_level,
@@ -414,10 +403,10 @@ for n, combination in enumerate(combinations):
                     grid_params_dict = generate_grid_description(grid, domain, restart=True)
 
                 sb_params_dict = {
-                    "sia_e": sia_e,
+                    "sia_e": combination["sia_e"],
                     "ssa_e": ssa_e,
                     "ssa_n": ssa_n,
-                    "pseudo_plastic_q": ppq,
+                    "pseudo_plastic_q": combination["ppq"],
                     "till_effective_fraction_overburden": tefo,
                     "vertical_velocity_approximation": vertical_velocity_approximation,
                 }
@@ -434,19 +423,19 @@ for n, combination in enumerate(combinations):
                 flux_adjustment_file = "$input_dir/data_sets/bed_dem/{}_g{}m_akglaciers_mask.nc".format(domain, grid)
                 # flux_adjustment_file = pism_dataname
                 climate_parameters = {
-                    "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(anomaly_file),
-                    "atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(climate_file),
+                    "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(combination["anomaly_file"]),
+                    "atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(combination["climate_file"]),
                     "atmosphere_given_period": 1,
-                    "atmosphere.elevation_change.file": "$input_dir/data_sets/climate_forcing/{}".format(climate_file),
-                    "atmosphere.elevation_change.temperature_lapse_rate": temperature_lapse_rate,
+                    "atmosphere.elevation_change.file": "$input_dir/data_sets/climate_forcing/{}".format(combination["climate_file"]),
+                    "atmosphere.elevation_change.temperature_lapse_rate": combination["temperature_lapse_rate"],
                     "surface.force_to_thickness_file": flux_adjustment_file,
-                    "surface.pdd.factor_ice": pdd_factor_ice / ice_density,
-                    "surface.pdd.factor_snow": pdd_factor_snow / ice_density,
-                    "surface.pdd.refreeze": refreeze_factor,
+                    "surface.pdd.factor_ice": combination["pdd_factor_ice"] / ice_density,
+                    "surface.pdd.factor_snow": combination["pdd_factor_snow"] / ice_density,
+                    "surface.pdd.refreeze": 0.2,
                 }
-                climate_parameters["surface.pdd.std_dev"] = pdd_std_dev
+                climate_parameters["surface.pdd.std_dev"] = combination["pdd_std_dev"]
                 # climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)
-                climate_params_dict = generate_climate(climate, **climate_parameters)
+                climate_params_dict = generate_climate(combination["climate"], **climate_parameters)
 
                 hydro_params_dict = generate_hydrology(hydrology)
 
@@ -456,8 +445,8 @@ for n, combination in enumerate(combinations):
 
                 ocean_params_dict = {
                     "shelf_base_melt_rate": 0.2,
-                    "ocean_delta_SL_file": "$input_dir/data_sets/climate_forcing/{}".format(climate_modifier_file),
-                    "ocean_frac_MBP_file": "$input_dir/data_sets/climate_forcing/{}".format(climate_modifier_file),
+                    "ocean_delta_SL_file": "$input_dir/data_sets/climate_forcing/{}".format(combination["climate_modifier_file"]),
+                    "ocean_frac_MBP_file": "$input_dir/data_sets/climate_forcing/{}".format(combination["climate_modifier_file"]),
                 }
 
                 if mbp == 1:
@@ -483,7 +472,7 @@ for n, combination in enumerate(combinations):
                 if not spatial_ts == "none":
                     exvars = spatial_ts_vars[spatial_ts]
                     spatial_ts_dict = generate_spatial_ts(
-                        outfile, exvars, exstep, odir=dirs["spatial_tmp"], split=False
+                        outfile, exvars, str(exstep), odir=dirs["spatial_tmp"], split=False
                     )
                     all_params_dict = merge_dicts(all_params_dict, spatial_ts_dict)
 
