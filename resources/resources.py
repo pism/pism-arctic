@@ -140,7 +140,9 @@ spatial_ts_vars["pdd"] = [
 ]
 
 
-def generate_spatial_ts(outfile, exvars, step, start=None, end=None, split=None, odir=None):
+def generate_spatial_ts(
+    outfile, exvars, step, start=None, end=None, split=None, odir=None
+):
     """
     Return dict to generate spatial time series
 
@@ -232,8 +234,13 @@ def generate_grid_description(grid_resolution, domain, restart=False):
 
     elif domain.lower() in ("akglaciers"):
 
-        mx_max = 2120
-        my_max = 4000
+        my_max = 2120
+        mx_max = 4000
+
+    elif domain.lower() in ("atna"):
+
+        mx_max = 1600
+        my_max = 1000
 
     elif domain.lower() in ("arctic"):
 
@@ -340,18 +347,20 @@ def generate_stress_balance(stress_balance, additional_params_dict):
     Returns: OrderedDict
     """
 
-    accepted_stress_balances = ("sia", "ssa+sia")
+    accepted_stress_balances = ("sia", "ssa+sia", "blatter")
 
     if stress_balance not in accepted_stress_balances:
         print(("{} not in {}".format(stress_balance, accepted_stress_balances)))
-        print(("available stress balance solvers are {}".format(accepted_stress_balances)))
+        print(
+            ("available stress balance solvers are {}".format(accepted_stress_balances))
+        )
         import sys
 
         sys.exit(0)
 
     params_dict = OrderedDict()
     params_dict["stress_balance"] = stress_balance
-    if stress_balance in ("ssa+sia"):
+    if stress_balance in ("ssa+sia", "blatter"):
         params_dict["options_left"] = ""
         params_dict["cfbc"] = ""
         params_dict["kill_icebergs"] = ""
@@ -411,7 +420,12 @@ def generate_calving(calving, **kwargs):
         params_dict["calving"] = "{},thickness_calving".format(calving)
     elif calving in ("hybrid_calving"):
         params_dict["calving"] = "eigen_calving,vonmises_calving,thickness_calving"
-    elif calving in ("float_kill", "float_kill,ocean_kill", "vonmises_calving,ocean_kill", "eigen_calving,ocean_kill"):
+    elif calving in (
+        "float_kill",
+        "float_kill,ocean_kill",
+        "vonmises_calving,ocean_kill",
+        "eigen_calving,ocean_kill",
+    ):
         params_dict["calving"] = calving
     else:
         print(("calving {} not recognized, exiting".format(calving)))
@@ -453,11 +467,18 @@ def generate_climate(climate, **kwargs):
         else:
             params_dict["temp_lapse_rate"] = kwargs["temp_lapse_rate"]
         if "atmosphere_lapse_rate_file" not in kwargs:
-            params_dict["atmosphere_lapse_rate_file"] = "climate_cru_TS31_historical_1910_2009.nc"
+            params_dict[
+                "atmosphere_lapse_rate_file"
+            ] = "climate_cru_TS31_historical_1910_2009.nc"
         else:
-            params_dict["atmosphere_lapse_rate_file"] = kwargs["atmosphere_lapse_rate_file"]
+            params_dict["atmosphere_lapse_rate_file"] = kwargs[
+                "atmosphere_lapse_rate_file"
+            ]
         params_dict["surface"] = "pdd"
     elif climate in ("present"):
+        params_dict["atmosphere"] = "given,elevation_change"
+        params_dict["surface"] = "pdd"
+    elif climate in ("present_flux"):
         params_dict["atmosphere"] = "given,elevation_change"
         params_dict["surface"] = "pdd,forcing"
     elif climate in ("paleo"):
@@ -514,14 +535,26 @@ def list_queues():
 # information about systems
 systems = {}
 
-systems["debug"] = {"mpido": "mpiexec -n {cores}", "submit": "echo", "job_id": "PBS_JOBID", "queue": {}}
+systems["debug"] = {
+    "mpido": "mpiexec -n {cores}",
+    "submit": "echo",
+    "job_id": "PBS_JOBID",
+    "queue": {},
+}
 
 systems["chinook"] = {
     "mpido": "mpirun -np {cores} -machinefile ./nodes_$SLURM_JOBID",
     "submit": "sbatch",
     "work_dir": "SLURM_SUBMIT_DIR",
     "job_id": "SLURM_JOBID",
-    "queue": {"t1standard": 24, "t1small": 24, "t2standard": 24, "t2small": 24, "debug": 24, "analysis": 24},
+    "queue": {
+        "t1standard": 24,
+        "t1small": 24,
+        "t2standard": 24,
+        "t2small": 24,
+        "debug": 24,
+        "analysis": 24,
+    },
 }
 
 systems["pleiades"] = {
@@ -782,7 +815,9 @@ def make_batch_header(system_name, n_cores, walltime, queue):
             ppn = system["queue"][queue]
         except:
             raise ValueError(
-                "There is no queue {} on {}. Pick one of {}.".format(queue, system_name, list(system["queue"].keys()))
+                "There is no queue {} on {}. Pick one of {}.".format(
+                    queue, system_name, list(system["queue"].keys())
+                )
             )
         # round up when computing the number of nodes needed to run on 'n_cores' cores
         nodes = int(math.ceil(float(n_cores) / ppn))
@@ -797,7 +832,9 @@ def make_batch_header(system_name, n_cores, walltime, queue):
             )
 
     system["mpido"] = system["mpido"].format(cores=n_cores)
-    system["header"] = system["header"].format(queue=queue, walltime=walltime, nodes=nodes, ppn=ppn, cores=n_cores)
+    system["header"] = system["header"].format(
+        queue=queue, walltime=walltime, nodes=nodes, ppn=ppn, cores=n_cores
+    )
     system["header"] += version_header()
 
     return system["header"], system
@@ -807,7 +844,13 @@ def make_batch_post_header(system):
 
     v = version_header()
 
-    if system in ("electra_broadwell", "pleiades", "pleiades_ivy", "pleiades_broadwell", "pleiades_haswell"):
+    if system in (
+        "electra_broadwell",
+        "pleiades",
+        "pleiades_ivy",
+        "pleiades_broadwell",
+        "pleiades_haswell",
+    ):
         return post_headers["pbs"] + v
     elif system in ("chinook"):
         return post_headers["slurm"] + v

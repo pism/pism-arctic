@@ -1,6 +1,97 @@
 #!/bin/bash
 
+n=24
+grid=5000
+duration=10000
+odir=2022_05_init
 
+python run_akglaciers.py -e alaska_present.csv -w 24:00:00 -s chinook -q t2small --domain akglaciers -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 100
+
+
+n=24
+grid=5000
+duration=10000
+odir=2022_05_init_ho
+
+python run_akglaciers.py -e alaska_present.csv -w 48:00:00 -s chinook -q t2small --stress_balance blatter --domain akglaciers -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 100
+
+n=24
+grid=2000
+duration=100
+odir=2022_06_init_ho
+
+python run_akglaciers.py -e alaska_present.csv -w 8:00:00 -s chinook -q t2small --stress_balance blatter --domain akglaciers -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 1
+
+n=48
+grid=1000
+duration=10
+odir=2022_06_init
+
+python run_akglaciers.py -e alaska_present.csv -w 8:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 1
+
+n=24
+grid=2000
+duration=10
+odir=2022_06_init_ho
+
+python run_akglaciers.py -e alaska_present.csv -w 8:00:00 -s chinook -q t2small --stress_balance blatter --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 1
+
+n=48
+grid=1000
+duration=10
+odir=2022_06_phi_ho
+
+python run_akglaciers.py -e alaska_present.csv -w 8:00:00 -s chinook -q t2small --stress_balance blatter --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 1
+
+n=24
+grid=2000
+duration=10
+odir=2022_06_phi_ho
+
+python run_akglaciers.py -e alaska_present.csv -w 8:00:00 -s chinook -q t2small --stress_balance blatter --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 1
+
+n=24
+grid=2000
+duration=1000
+odir=2022_06_phip
+
+python run_akglaciers.py -e alaska_present.csv -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10
+
+n=24
+grid=2000
+duration=500
+odir=2022_06_phip2
+
+python run_akglaciers.py -e alaska_present.csv -w 8:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10
+
+n=48
+grid=1000
+duration=5
+odir=2022_06_phip_ho
+
+python run_akglaciers.py -e alaska_present.csv -w 8:00:00 -s chinook -q t2small --stress_balance blatter --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 1 -i 2022_06_phip/state/atna_g1000m_id_SNAP-FLUX-0_0_100_backup.nc
+
+n=96
+grid=500
+duration=1
+odir=2022_06_phip_ho
+
+python run_akglaciers.py -e alaska_present.csv -w 18:00:00 -s chinook -q t2standard --stress_balance blatter --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep monthly -i 2022_06_phip_ho/state/atna_g1000m_id_SNAP-FLUX-0_0_5.nc
+
+n=96
+grid=500
+duration=1
+odir=2022_06_ho
+
+python run_akglaciers.py -e alaska_present.csv -w 18:00:00 -s chinook -q t2standard --stress_balance blatter --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep monthly -i 2022_06_phip_ho/state/atna_g1000m_id_SNAP-FLUX-0_0_5.nc
+
+
+n=48
+grid=1000
+duration=100
+odir=2022_06_phip
+
+python run_akglaciers.py -e alaska_present.csv -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain atna -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10 -i 2022_06_phip/state/atna_g2000m_id_SNAP-FLUX-0_0_1000.nc
 
 n=72
 grid=1000

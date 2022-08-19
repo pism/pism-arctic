@@ -24,6 +24,14 @@ x_max=3600000.0
 y_min=-1920000.0
 y_max=-860000.0
 
+domain=atna
+
+x_min=2000000.0
+x_max=2800000.0
+y_min=-1500000.0
+y_max=-1000000.0
+
+
 v=2022
 options='-overwrite -t_srs EPSG:5936 -r average -co FORMAT=NC4 -co COMPRESS=DEFLATE -co ZLEVEL=1'
 grid=2000
