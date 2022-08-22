@@ -85,9 +85,9 @@ parser.add_argument(
     "-d",
     "--domain",
     dest="domain",
-    choices=["akglaciers", "arctic", "atna"],
+    choices=["akglaciers", "arctic", "atna", "malaspina"],
     help="sets the modeling domain",
-    default="akglaciers",
+    default="malaspina",
 )
 parser.add_argument(
     "--exstep",
@@ -492,7 +492,9 @@ for n, row in enumerate(uq_df.iterrows()):
                 )
 
                 density_ice = 910.0
-                flux_adjustment_file = pism_dataname
+                flux_adjustment_file = (
+                    "$input_dir/data_sets/bed_dem/{}_g{}m_mask.nc".format(domain, grid)
+                )
                 climate_parameters = {
                     "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
                         combination["anomaly_file"]

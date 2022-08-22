@@ -50,6 +50,14 @@ def generate_domain(domain):
         pism_exec = """pismr -regional -x_range {x_min},{x_max} -y_range {y_min},{y_max}  -bootstrap -regional.zero_gradient true -regional.no_model_strip 5.0""".format(
             x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
         )
+    elif domain.lower() in ("malaspina"):
+        x_min = 2200000.0 
+        x_max = 2800000.0         
+        y_min = -1560000.0        
+        y_max = -1060000.0
+        pism_exec = """pismr -regional -x_range {x_min},{x_max} -y_range {y_min},{y_max}  -bootstrap -regional.zero_gradient true -regional.no_model_strip 5.0""".format(
+            x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
+        )
     else:
         print(("Domain {} not recognized, exiting".format(domain)))
         import sys
@@ -250,9 +258,9 @@ def generate_grid_description(grid_resolution, domain, restart=False):
     else:
         print("how did I get here")
 
-    resolution_max = 500
+    resolution_max = 250
 
-    accepted_resolutions = (500, 1000, 2000, 5000, 10000)
+    accepted_resolutions = (250, 500, 1000, 2000, 5000, 10000)
 
     try:
         grid_resolution in accepted_resolutions
