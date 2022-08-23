@@ -425,6 +425,7 @@ for n, row in enumerate(uq_df.iterrows()):
                     "o_format": oformat,
                     "output.compression_level": compression_level,
                     "config_override": "$config",
+                    "stress_balance.sia.bed_smoother.range": grid,
                     "stress_balance.blatter.coarsening_factor": 4,
                     "blatter_Mz": 17,
                     "bp_ksp_type": "gmres",
