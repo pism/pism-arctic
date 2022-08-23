@@ -51,9 +51,9 @@ def generate_domain(domain):
             x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
         )
     elif domain.lower() in ("malaspina"):
-        x_min = 2200000.0 
-        x_max = 2800000.0         
-        y_min = -1560000.0        
+        x_min = 2280000.0
+        x_max = 2720000.0
+        y_min = -1460000.0
         y_max = -1060000.0
         pism_exec = """pismr -regional -x_range {x_min},{x_max} -y_range {y_min},{y_max}  -bootstrap -regional.zero_gradient true -regional.no_model_strip 5.0""".format(
             x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
@@ -242,8 +242,13 @@ def generate_grid_description(grid_resolution, domain, restart=False):
 
     elif domain.lower() in ("akglaciers"):
 
-        my_max = 2120
-        mx_max = 4000
+        my_max = 4280
+        mx_max = 8000
+
+    elif domain.lower() in ("malaspina"):
+
+        my_max = 4280
+        mx_max = 8000
 
     elif domain.lower() in ("atna"):
 

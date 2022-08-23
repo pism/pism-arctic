@@ -79,7 +79,7 @@ parser.add_argument(
     dest="calving",
     choices=["float_kill", "vonmises_calving", "eigen_calving"],
     help="calving",
-    default="float_kill",
+    default="vonmises_calving",
 )
 parser.add_argument(
     "-d",
@@ -201,6 +201,13 @@ parser.add_argument(
     help="Compression level for output file. Only works with netcdf4_serial.",
     default=2,
 )
+parser.add_argument(
+    "--dataset_version",
+    dest="version",
+    choices=["2022_millan"],
+    help="input data set version",
+    default="2022_millan",
+)
 
 options = parser.parse_args()
 
@@ -227,14 +234,14 @@ hydrology = options.hydrology
 stress_balance = options.stress_balance
 test_climate_models = options.test_climate_models
 vertical_velocity_approximation = options.vertical_velocity_approximation
-
+version = options.version
 ensemble_file = "../uncertainty_quantification/{}".format(options.ensemble_file)
 
 domain = options.domain
 pism_exec = generate_domain(domain)
 
-pism_dataname = "$input_dir/data_sets/bed_dem/pism_akglaciers_v2022_g{}m.nc".format(
-    grid
+pism_dataname = "$input_dir/data_sets/bed_dem/pism_akglaciers_v{}_g{}m.nc".format(
+    version, grid
 )
 
 regridvars = "litho_temp,enthalpy,age,tillwat,bmelt,ice_area_specific_volume,thk"
@@ -360,8 +367,8 @@ for n, row in enumerate(uq_df.iterrows()):
     full_exp_name = "_".join(
         ["_".join([k, str(v)]) for k, v in list(name_options.items())]
     )
-    full_outfile = "{domain}_g{grid}m_{experiment}.nc".format(
-        domain=domain.lower, grid=grid, experiment=full_exp_name
+    full_outfile = "{domain}_g{grid}m_v{version}_{experiment}.nc".format(
+        domain=domain.lower, version=version, grid=grid, experiment=full_exp_name
     )
 
     # All runs in one script file for coarse grids that fit into max walltime
@@ -493,7 +500,9 @@ for n, row in enumerate(uq_df.iterrows()):
 
                 density_ice = 910.0
                 flux_adjustment_file = (
-                    "$input_dir/data_sets/bed_dem/{}_g{}m_mask.nc".format(domain, grid)
+                    "$input_dir/data_sets/bed_dem/{}_v{}_g{}m_mask.nc".format(
+                        domain, version, grid
+                    )
                 )
                 climate_parameters = {
                     "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
