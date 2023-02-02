@@ -1,5 +1,5 @@
 gridtype = projection
-xsize = 2000
+xsize = 1000
 ysize = 530
 xunits = "meters"
 yunits = "meters"
