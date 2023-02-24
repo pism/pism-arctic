@@ -1,4 +1,4 @@
-id,ppq,siae,temperature_lapse_rate,refreeze_factor,pdd_factor_ice,pdd_factor_snow,pdd_std_dev,climate,climate_file,climate_modifier_file,anomaly_file
+id,ppq,sia_e,temperature_lapse_rate,refreeze_factor,pdd_factor_ice,pdd_factor_snow,pdd_std_dev,climate,climate_file,climate_modifier_file,anomaly_file
 CCSM4,0.6,1.5,0,0.5,10.5,4,5,paleo,akglaciers_climate_cru_TS40_historical_1980_2005_YMM.nc,climate_modifier_0C_-110m.nc,akglaciers_CCSM4_lgm_historical.nc
 CNRM-CM5,0.6,1.5,0,0.5,10.5,4,5,paleo,akglaciers_climate_cru_TS40_historical_1980_2005_YMM.nc,climate_modifier_0C_-110m.nc,akglaciers_CNRM-CM5_lgm_historical.nc
 GISS-E2-R,0.6,1.5,0,0.5,10.5,4,5,paleo,akglaciers_climate_cru_TS40_historical_1980_2005_YMM.nc,climate_modifier_0C_-110m.nc,akglaciers_GISS-E2-R_lgm_historical.nc

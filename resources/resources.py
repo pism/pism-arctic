@@ -92,8 +92,6 @@ spatial_ts_vars["medium"] = [
 
 
 spatial_ts_vars["basic"] = [
-    "bwat",
-    "dHdt",
     "climatic_mass_balance",
     "effective_air_temp",
     "effective_precipitation",
@@ -102,9 +100,9 @@ spatial_ts_vars["basic"] = [
     "ice_surface_temp",
     "mask",
     "mass_fluxes",
-    "pdd_fluxes",
     "sftgif",
     "thk",
+    "tillwat",
     "topg",
     "usurf",
     "velbase_mag",
@@ -383,7 +381,7 @@ def generate_stress_balance(stress_balance, additional_params_dict):
         params_dict["pseudo_plastic"] = ""
         params_dict["tauc_slippery_grounding_lines"] = "false"
         params_dict["stress_balance.ssa.fd.max_speed"] = 10000.0e3
-
+    print(stress_balance)
     if stress_balance == "blatter":
         params_dict["stress_balance.blatter.coarsening_factor"] = 4
         params_dict["blatter_Mz"] = 17
@@ -513,7 +511,7 @@ def generate_climate(climate, **kwargs):
     elif climate in ("paleo"):
         params_dict["atmosphere"] = "given,anomaly"
         params_dict["atmosphere_anomaly_period"] = 1
-        params_dict["surface"] = "pdd,forcing"
+        params_dict["surface"] = "pdd"
     else:
         print(("climate {} not recognized, exiting".format(climate)))
         import sys

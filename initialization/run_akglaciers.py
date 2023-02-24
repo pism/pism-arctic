@@ -204,12 +204,13 @@ parser.add_argument(
 parser.add_argument(
     "--dataset_version",
     dest="version",
-    choices=["2022_millan"],
+    choices=["2022_millan", "2023_millan"],
     help="input data set version",
-    default="2022_millan",
+    default="2023_millan",
 )
 
 options = parser.parse_args()
+print(options.stress_balance)
 
 nn = options.n
 input_dir = abspath(options.input_dir)
@@ -236,7 +237,6 @@ test_climate_models = options.test_climate_models
 vertical_velocity_approximation = options.vertical_velocity_approximation
 version = options.version
 ensemble_file = "../uncertainty_quantification/{}".format(options.ensemble_file)
-
 domain = options.domain
 pism_exec = generate_domain(domain)
 
@@ -245,6 +245,7 @@ pism_dataname = "$input_dir/data_sets/bed_dem/pism_akglaciers_v{}_g{}m.nc".forma
 )
 
 regridvars = "litho_temp,enthalpy,age,tillwat,bmelt,ice_area_specific_volume,thk"
+# regridvars = "litho_temp,enthalpy,age,bmelt,ice_area_specific_volume,thk"
 
 dirs = {"output": "$output_dir", "spatial_tmp": "$spatial_tmp_dir"}
 for d in ["performance", "state", "scalar", "spatial", "jobs", "basins"]:
@@ -506,7 +507,7 @@ for n, row in enumerate(uq_df.iterrows()):
                     "atmosphere.elevation_change.temperature_lapse_rate": combination[
                         "temperature_lapse_rate"
                     ],
-                    "surface.force_to_thickness_file": flux_adjustment_file,
+                    "force_to_thickness_file": flux_adjustment_file,
                     "surface.pdd.factor_ice": combination["pdd_factor_ice"]
                     / ice_density,
                     "surface.pdd.factor_snow": combination["pdd_factor_snow"]
