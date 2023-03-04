@@ -1,5 +1,22 @@
 #!/bin/bash
 
+grid=2000
+n=48
+duration=1000
+odir=2023_02_v2023_malaspina
+
+python run_akglaciers.py -e alaska_present.csv --dataset_version 2023_millan -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain malaspina -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10
+
+grid=2000
+n=48
+duration=1000
+odir=2023_02_v2022_malaspina
+
+python run_akglaciers.py -e alaska_present.csv --dataset_version 2022_millan -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain malaspina -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10
+
+
+
+
 n=120
 grid=250
 duration=2
