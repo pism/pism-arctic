@@ -310,7 +310,6 @@ phi_max = 40.0
 topg_min = -700
 topg_max = 700
 
-rcps = ["paris", "26", "45", "85"]
 lapse_rate = 6
 ice_density = 910.0
 
@@ -489,9 +488,7 @@ for n, row in enumerate(uq_df.iterrows()):
 
                 density_ice = 910.0
                 flux_adjustment_file = (
-                    "$input_dir/data_sets/bed_dem/{}_v{}_g{}m_mask.nc".format(
-                        domain, version, grid
-                    )
+                    f"$input_dir/data_sets/bed_dem/{domain}_v{version}_g{grid}m_mask.nc"
                 )
                 climate_parameters = {
                     "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
