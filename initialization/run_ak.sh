@@ -1,5 +1,37 @@
 #!/bin/bash
 
+grid=1000
+n=48
+duration=100
+odir=2023_03_v2023
+
+python run_akglaciers.py -e alaska_present.csv --dataset_version 2023_millan -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain malaspina -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 1 -i 2023_03_v2022/state/malaspina_g2000m_id_SNAP-FLUX-0_0_1000.nc
+
+grid=1000
+n=48
+duration=100
+odir=2023_03_v2022
+
+python run_akglaciers.py -e alaska_present.csv --dataset_version 2022_millan -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain malaspina -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 1 -i 2023_03_v2022/state/malaspina_g2000m_id_SNAP-FLUX-0_0_1000.nc
+
+grid=2000
+n=48
+duration=1000
+odir=2023_03_v2023
+
+python run_akglaciers.py -e alaska_present.csv --dataset_version 2023_millan -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain malaspina -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10 
+
+grid=2000
+n=48
+duration=1000
+odir=2023_03_v2022
+
+python run_akglaciers.py -e alaska_present.csv --dataset_version 2022_millan -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia --domain malaspina -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10
+
+
+
+
+
 grid=2000
 n=48
 duration=1000
