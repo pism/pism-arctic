@@ -381,7 +381,6 @@ def generate_stress_balance(stress_balance, additional_params_dict):
         params_dict["pseudo_plastic"] = ""
         params_dict["tauc_slippery_grounding_lines"] = "false"
         params_dict["stress_balance.ssa.fd.max_speed"] = 10000.0e3
-    print(stress_balance)
     if stress_balance == "blatter":
         params_dict["stress_balance.blatter.coarsening_factor"] = 4
         params_dict["blatter_Mz"] = 17
