@@ -302,7 +302,7 @@ done
 # set up model initialization
 # ########################################################
 
-ssa_n = 3.0
+ssa_n = 3.1
 ssa_e = 1.0
 tefo = 0.020
 phi_min = 15.0
