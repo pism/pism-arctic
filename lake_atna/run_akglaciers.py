@@ -302,10 +302,10 @@ done
 # set up model initialization
 # ########################################################
 
-ssa_n = 3.1
-ssa_e = 1.0
+ssa_n = 3.25
+ssa_e = 3.0
 tefo = 0.020
-phi_min = 15.0
+phi_min = 5.0
 phi_max = 40.0
 topg_min = -700
 topg_max = 700
@@ -508,8 +508,8 @@ for n, row in enumerate(uq_df.iterrows()):
                     "surface.pdd.factor_ice": combination["pdd_factor_ice"]
                     / ice_density,
                     "surface.pdd.factor_snow": combination["pdd_factor_snow"]
-                    / ice_density,
-                    "surface.pdd.refreeze": 0.2,
+                   / ice_density,
+                    "surface.pdd.refreeze": combination["refreeze_factor"],
                 }
                 climate_parameters["surface.pdd.std_dev"] = combination["pdd_std_dev"]
                 # climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)
