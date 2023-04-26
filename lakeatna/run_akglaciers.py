@@ -531,7 +531,6 @@ for n, row in enumerate(uq_df.iterrows()):
 		    "ocean_delta_SL_file": "$input_dir/data_sets/climate_forcing/{}".format(
                         combination["climate_modifier_file"]
                     ),
-
                     "ocean_frac_MBP_file": "$input_dir/data_sets/climate_forcing/{}".format(
                         combination["climate_modifier_file"]
                     ),
