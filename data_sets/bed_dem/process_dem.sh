@@ -6,19 +6,19 @@ epsg=5936
 options='-overwrite -r average -co FORMAT=NC4 -co COMPRESS=DEFLATE -co ZLEVEL=2'
 
 default_millan_dir=/Volumes/79n/millan-global-ice-thickness
-read -p "Enter path to Millan et al ice thickness default=$default_millan_dir: " millan_dir
+read -p "Enter path to Millan et al ice thickness (/millan-global-ice-thickness), default=$default_millan_dir: " millan_dir
 millan_dir=${millan_dir:-$default_millan_dir}
 millan=${millan_dir}/THICKNESS-RGI-merged_EPSG_${epsg}.vrt
 
 default_glodem_dir=.
-read -p "Enter path to GLODEM default=$default_glodem_dir: " glodem_dir
+read -p "Enter path to GLODEM (/ak-glo) default=$default_glodem_dir: " glodem_dir
 glodem_dir=${glodem_dir:-$default_glodem_dir}
 
 glodem=${glodem_dir}/ak_glo_90_geoid.tif
 glodem_slope=${glodem_dir}/ak_glo_90_geoid_slope.tif
 
 default_gebcodem_dir=.
-read -p "Enter path to GEBCO default=$default_gebcodem_dir: " gebcodem_dir
+read -p "Enter path to GEBCO_2022.nc, default=$default_gebcodem_dir: " gebcodem_dir
 gebcodem_dir=${gebcodem_dir:-$default_gebcodem_dir}
 gebco=${gebcodem_dir}/GEBCO_2022.nc
 

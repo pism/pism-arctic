@@ -501,9 +501,13 @@ for n, row in enumerate(uq_df.iterrows()):
                     "atmosphere.elevation_change.file": "$input_dir/data_sets/climate_forcing/{}".format(
                         combination["climate_file"]
                     ),
-                    "atmosphere.elevation_change.temperature_lapse_rate": combination[
-                        "temperature_lapse_rate"
-                    ],
+                    "atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(
+                        combination["climate_modifier_file"]
+                    ),
+                    # "atmosphere.delta_P.file": "$input_dir/data_sets/climate_forcing/{}".format(                        combination["climate_modifier_file"]                    ),
+
+                    "atmosphere.elevation_change.temperature_lapse_rate": 
+			combination["temperature_lapse_rate"],
                     "force_to_thickness_file": flux_adjustment_file,
                     "surface.pdd.factor_ice": combination["pdd_factor_ice"]
                     / ice_density,
