@@ -420,7 +420,7 @@ for n, row in enumerate(uq_df.iterrows()):
                     "ys": start,
                     "ye": end,
                     "calendar": "365_day",
-                    "climate_forcing_buffer_size": 13,
+                    "input.forcing.buffer_size": 13,
                     "o": join(dirs["state"], outfile),
                     "o_format": oformat,
                     "output.compression_level": compression_level,
