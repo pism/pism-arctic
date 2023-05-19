@@ -491,23 +491,22 @@ for n, row in enumerate(uq_df.iterrows()):
                     f"$input_dir/data_sets/bed_dem/{domain}_v{version}_g{grid}m_mask.nc"
                 )
                 climate_parameters = {
-                    "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["anomaly_file"]
-                    ),
                     "atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_file"]
+                        combination["climate_file"] #akglaciers_climate_cru_TS40_19980_2004_YMM.nc
+                    ),
+                    "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
+                        combination["anomaly_file"] #akglaciers_GISS-E2-R_lgm_historical.nc
                     ),
                     "atmosphere.given.periodic": "",
                     "atmosphere.elevation_change.file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_file"]
+                        combination["climate_file"] #takes the elevation from the SNAP data
                     ),
-                    "atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_modifier_file"]
-                    ),
-                    # "atmosphere.delta_P.file": "$input_dir/data_sets/climate_forcing/{}".format(                        combination["climate_modifier_file"]                    ),
-
-                    "atmosphere.elevation_change.temperature_lapse_rate": 
+		    "atmosphere.elevation_change.temperature_lapse_rate": 
 			combination["temperature_lapse_rate"],
+                    "atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(
+                        combination["climate_modifier_file"] #climate_modifier_0C.nc / grip_johnsen1995_lgm_norm_dT.nc
+                    ),
+
                     "force_to_thickness_file": flux_adjustment_file,
                     "surface.pdd.factor_ice": combination["pdd_factor_ice"]
                     / ice_density,
@@ -530,13 +529,13 @@ for n, row in enumerate(uq_df.iterrows()):
                 ocean_params_dict = {
                     "shelf_base_melt_rate": 0.2,
                     "ocean_delta_T_file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_modifier_file"]
+                        combination["sealevel_modifier_file"]
                     ),
 		    "ocean_delta_SL_file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_modifier_file"]
+                        combination["sealevel_modifier_file"]
                     ),
                     "ocean_frac_MBP_file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_modifier_file"]
+                        combination["sealevel_modifier_file"]
                     ),
                 }
 
