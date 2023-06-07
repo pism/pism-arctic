@@ -28,7 +28,7 @@ ncks -A -v usurf  MERRA2_topo.nc  MERRA2_2000_2009_MM.nc
 cdo -O -f nc4 -z zip_2 ymonmean  MERRA2_2000_2009_MM.nc MERRA2_2000_2009_YMM.nc
 cdo -O -f nc4 -z zip_2 yearmean  MERRA2_2000_2009_MM.nc MERRA2_2000_2009_YM.nc
 cdo -O -f nc4 -z zip_2 remapbil,"../../grids/akglaciers_2km.txt" MERRA2_2000_2009_YMM.nc  ${domain}_climate_MERRA2_2000_2009_YMM.nc
-adjust_timeline.py -d 2000-1-1 -u days -c 360_day -a 2000-1-1 -p monthly  ${domain}_climate_MERRA2_2000_2009_YMM.nc
+adjust_timeline.py  -c 365_day -a 1-1-1 -d 1-1-1 -p monthly  ${domain}_climate_MERRA2_2000_2009_YMM.nc
 cdo -O -f nc4 -z zip_2 remapbil,"../../grids/akglaciers_2km.txt" MERRA2_2000_2009_YM.nc  ${domain}_climate_MERRA2_2000_2009_YM.nc
 cdo -O -f nc4 -z zip_2 timmean ${domain}_climate_MERRA2_2000_2009_YM.nc  ${domain}_climate_MERRA2_2000_2009_TM.nc
 
