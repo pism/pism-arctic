@@ -1,0 +1,14 @@
+# ignore ALL .log files
+*.log
+
+# ignore ALL files in ANY directory named temp
+temp/
+
+# ignore some purely data folders
+data_sets/*/*.nc
+data_sets/*/*.xml
+data_sets/*/*.tif
+data_sets/*/*.zip
+data_sets/*/*.tmp
+data_sets/*/*.ovr
+
