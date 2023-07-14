@@ -24,22 +24,26 @@ for gcm in CESM2-WACCM-FV2 CNRM-CM5 GISS-E2-R INM-CM4 IPSL-CM5A-LR MIROC-ES2L MI
             cdo ${cdo_opt} mergetime ${pmip_dir}/${gcm}/${experiment}/${variable}_*.nc ${pmip_dir}/${gcm}/${variable}_${experiment}.nc # merge the files into one large file per variable
         done
 
-        cdo $cdo_opt merge ${pmip_dir}/${gcm}/ts_${experiment}.nc ${pmip_dir}/${gcm}/tas_${experiment}.nc ${pmip_dir}/${gcm}/tstas_${experiment}.nc # merge tas and ts 
+        cdo $cdo_opt merge ${pmip_dir}/${gcm}/ts_${experiment}.nc ${pmip_dir}/${gcm}/tas_${experiment}.nc ${pmip_dir}/${gcm}/tstas_${experiment}.nc # merge tas and ts
         cdo $cdo_opt merge ${pmip_dir}/${gcm}/tstas_${experiment}.nc -setattribute,pr@units="kg m-2 year-1" -mulc,3.15569259747e7 ${pmip_dir}/${gcm}/pr_${experiment}.nc ${pmip_dir}/${gcm}_${experiment}.nc # merge tasts with pr and calculate the pr per year
 
     done
 
+    cdo $cdo_opt merge ${pmip_dir}/${gcm}_lgm.nc ${pmip_dir}/${gcm}/lgm/orog_*.nc ${pmip_dir}/${gcm}_lgm_orog.nc # merge orog into it
     cdo $cdo_opt selyear,1980/2004 ${pmip_dir}/${gcm}_historical.nc ${pmip_dir}/${gcm}_historical_1980-2004.nc # from the historical data (1850-2004) only use 1980-2004
     cdo $cdo_opt ymonmean ${pmip_dir}/${gcm}_historical_1980-2004.nc ${pmip_dir}/${gcm}_historical_YMM.nc # calculate yearly monthly means
-    cdo $cdo_opt ymonmean ${pmip_dir}/${gcm}_lgm.nc ${pmip_dir}/${gcm}_lgm_YMM.nc # calculated yearly monthly means
+    cdo $cdo_opt ymonmean ${pmip_dir}/${gcm}_lgm_orog.nc ${pmip_dir}/${gcm}_lgm_YMM.nc # calculated yearly monthly means
 
     cdo $cdo_opt chname,tas,air_temp_anomaly,ts,surf_temp_anomaly,pr,precipitation_anomaly -remapbil,../../grids/akglaciers_2km.txt -sub ${pmip_dir}/${gcm}_lgm_YMM.nc ${pmip_dir}/${gcm}_historical_YMM.nc ${domain}_${gcm}_lgm_historical.nc
     adjust_timeline.py -c 365_day -a 1-1-1 -d 1-1-1 -p monthly ${domain}_${gcm}_lgm_historical.nc
+#    cdo $cdo_opt fldmean -yearmean akglaciers_CESM2-WACCM-FV2_lgm_historical.nc yearme.nc
+    cdo $cdo_opt fldmean -yearmean ${domain}_${gcm}_lgm_historical.nc ${pmip_dir}/${domain}_${gcm}_lgm_historical_YM_fldmean.nc
 
     for experiment in lgm historical; do
         cdo $cdo_opt chname,tas,air_temp,ts,surf_temp,pr,precipitation -remapbil,../../grids/akglaciers_2km.txt ${pmip_dir}/${gcm}_${experiment}_YMM.nc  ${pmip_dir}/${domain}_${gcm}_${experiment}_YMM.nc
         adjust_timeline.py -c 365_day -a 1-1-1 -d 1-1-1 -p monthly ${pmip_dir}/${domain}_${gcm}_${experiment}_YMM.nc
         cdo $cdo_opt fldmean ${pmip_dir}/${domain}_${gcm}_${experiment}_YMM.nc ${pmip_dir}/${domain}_${gcm}_${experiment}_YMM_fldmean.nc
+#        cdo $cdo_opt fldmean -yearmean ${pmip_dir}/${domain}_${gcm}_${experiment}_YMM.nc ${pmip_dir}/${domain}_${gcm}_${experiment}_YM_fldmean.nc
     done
 done
 

@@ -58,6 +58,7 @@ cdo -L -O -f nc4 -z zip_2 merge usurf_akcanada_1km_dem_${domain}.nc -selyear,${s
 adjust_timeline.py -a ${start_year}-1-1 -d ${start_year}-1-1 -p monthly ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc
 
 cdo -L -O -f nc4 -z zip_2 selvar,precipitation,air_temp -ymonmean ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM_uf.nc
+cdo -L -O -f nc4 -z zip_2 selvar,precipitation,air_temp -ymonstd ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMMstd_uf.nc
 mpirun -np 8 fill_missing_petsc.py -v air_temp,precipitation ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM_uf.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM.nc
 adjust_timeline.py -a 1-1-1 -d 1-1-1 -p monthly -c 365_day ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM.nc
 ncks -4 -L 2 -A usurf_akcanada_1km_dem_${domain}.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM.nc

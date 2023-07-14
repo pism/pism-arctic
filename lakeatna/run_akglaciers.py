@@ -48,7 +48,7 @@ parser.add_argument(
     "-i",
     "--initial_state_file",
     dest="initialstatefile",
-    help="Input file to restart from",
+    help="Input file to restart from, default=None, set to combination to read in from combination .csv", #modified by maria
     default=None,
 )
 parser.add_argument(
@@ -115,7 +115,7 @@ parser.add_argument(
 parser.add_argument(
     "--i_dir",
     dest="input_dir",
-    help="input directory",
+    help="input directory, default the script_directory/..",
     default=abspath(join(script_directory, "..")),
 )
 parser.add_argument(
@@ -174,8 +174,11 @@ parser.add_argument(
 parser.add_argument(
     "--start_year", dest="start_year", type=int, help="Simulation start year", default=0
 )
+parser.add_argument( #added by Maria
+    "--end_year", dest="end_year", type=int, help="Simulation end year", default=1000
+)
 parser.add_argument(
-    "--duration", dest="duration", type=int, help="Years to simulate", default=1000
+    "--duration", dest="duration", type=int, help="Years to simulate", default=1000 # 
 )
 parser.add_argument(
     "--step", dest="step", type=int, help="Step in years for restarting", default=1000
@@ -244,7 +247,7 @@ pism_dataname = "$input_dir/data_sets/bed_dem/pism_akglaciers_v{}_g{}m.nc".forma
     version, grid
 )
 
-regridvars = "litho_temp,enthalpy,age,tillwat,bmelt,ice_area_specific_volume,thk"
+regridvars = "enthalpy,tillwat,ice_area_specific_volume,thk"
 # regridvars = "litho_temp,enthalpy,age,bmelt,ice_area_specific_volume,thk"
 
 dirs = {"output": "$output_dir", "spatial_tmp": "$spatial_tmp_dir"}
@@ -327,7 +330,13 @@ scripts_combinded = []
 scripts_post = []
 
 simulation_start_year = options.start_year
+
+#if options.duration == None: #added by maria
+#    simulation_end_year = options.end_year
+#else: 
+#    simulation_end_year = options.start_year + options.duration
 simulation_end_year = options.start_year + options.duration
+   
 restart_step = options.step
 
 if restart_step > (simulation_end_year - simulation_start_year):
@@ -435,6 +444,11 @@ for n, row in enumerate(uq_df.iterrows()):
                     if initialstatefile is None:
                         general_params_dict["bootstrap"] = ""
                         general_params_dict["i"] = pism_dataname
+                    elif initialstatefile == "var_ini":
+                        general_params_dict["bootstrap"] = ""
+                        general_params_dict["i"] = pism_dataname
+                        general_params_dict["regrid_file"] = combination["input_file"]
+                        general_params_dict["regrid_vars"] = regridvars
                     else:
                         general_params_dict["bootstrap"] = ""
                         general_params_dict["i"] = pism_dataname
@@ -490,60 +504,96 @@ for n, row in enumerate(uq_df.iterrows()):
                 flux_adjustment_file = (
                     f"$input_dir/data_sets/bed_dem/{domain}_v{version}_g{grid}m_mask.nc"
                 )
-                climate_parameters = {
-                    "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["anomaly_file"]
-                    ),
-                    "atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_file"]
-                    ),
-                    "atmosphere.given.periodic": "",
-                    "atmosphere.elevation_change.file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_file"]
-                    ),
-                    "atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_modifier_file"]
-                    ),
-                    # "atmosphere.delta_P.file": "$input_dir/data_sets/climate_forcing/{}".format(                        combination["climate_modifier_file"]                    ),
-
-                    "atmosphere.elevation_change.temperature_lapse_rate": 
-			combination["temperature_lapse_rate"],
-                    "force_to_thickness_file": flux_adjustment_file,
-                    "surface.pdd.factor_ice": combination["pdd_factor_ice"]
-                    / ice_density,
-                    "surface.pdd.factor_snow": combination["pdd_factor_snow"]
-                   / ice_density,
-                    "surface.pdd.refreeze": combination["refreeze_factor"],
-                }
+                
+                if combination["climate"] == "paleo":
+                    climate_parameters = {
+			"atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(
+				combination["climate_file"] #akglaciers_climate_cru_TS40_19980_2004_YMM.nc (spatial, YMM)
+			),
+			"atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
+				combination["anomaly_file"] #akglaciers_GISS-E2-R_lgm_historical.nc (spatial, YMM from GCMs)
+			),
+			"atmosphere.elevation_change.temperature_lapse_rate": 
+				combination["temperature_lapse_rate"],
+			"force_to_thickness_file": flux_adjustment_file,
+			"surface.pdd.factor_ice": combination["pdd_factor_ice"]
+			/ ice_density,
+			"surface.pdd.factor_snow": combination["pdd_factor_snow"]
+			/ ice_density,
+			"surface.pdd.refreeze": combination["refreeze_factor"],
+                    }
+                elif combination["climate"] == "lgmdeglaciation":
+                    climate_parameters = {
+			"atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(
+				combination["climate_file"] #akglaciers_climate_cru_TS40_19980_2004_YMM.nc (spatial, YMM)
+			),
+			"atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
+				combination["anomaly_file"] #akglaciers_GISS-E2-R_lgm_historical.nc (spatial, YMM from GCMs)
+			),
+			"atmosphere.elevation_change.temperature_lapse_rate": 
+				combination["temperature_lapse_rate"],
+			"atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(
+				combination["climate_modifier_file"] #scales the temperature by the ice core temperature change or not (constant dT for paleo runs)
+			),
+			"atmosphere.precip_scaling.file": "$input_dir/data_sets/climate_forcing/{}".format(
+				combination["climate_modifier_file"] #scales the precipitation by the ice core temperature change or not (constant dT for paleo runs)
+			),
+#			"force_to_thickness_file": flux_adjustment_file,
+			"surface.pdd.factor_ice": combination["pdd_factor_ice"]
+			/ ice_density,
+			"surface.pdd.factor_snow": combination["pdd_factor_snow"]
+			/ ice_density,
+			"surface.pdd.refreeze": combination["refreeze_factor"],
+                    }
+#                climate_parameters = {
+#                    "atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(
+#                        combination["climate_file"] #akglaciers_climate_cru_TS40_19980_2004_YMM.nc (spatial, YMM)
+#                    ),
+#                    "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
+#                        combination["anomaly_file"] #akglaciers_GISS-E2-R_lgm_historical.nc (spatial, YMM from GCMs)
+#                    ),
+#		    "atmosphere.elevation_change.temperature_lapse_rate": 
+#			combination["temperature_lapse_rate"],
+#                    "atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(
+#                        combination["climate_modifier_file"] #scales the temperature by the ice core temperature change or not (constant dT for paleo runs)
+#                    ),
+#                    "atmosphere.precip_scaling.file": "$input_dir/data_sets/climate_forcing/{}".format(
+#                        combination["climate_modifier_file"] #scales the precipitation by the ice core temperature change or not (constant dT for paleo runs)
+#                    ),
+#                    "force_to_thickness_file": flux_adjustment_file,
+#                    "surface.pdd.factor_ice": combination["pdd_factor_ice"]
+#                    / ice_density,
+#                    "surface.pdd.factor_snow": combination["pdd_factor_snow"]
+#                   / ice_density,
+#                    "surface.pdd.refreeze": combination["refreeze_factor"],
+#                }
                 climate_parameters["surface.pdd.std_dev.value"] = combination["pdd_std_dev"]
-                # climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)
+                
+                    
                 climate_params_dict = generate_climate(
                     combination["climate"], **climate_parameters
-                )
-
+                )                    
+                    
                 hydro_params_dict = generate_hydrology(hydrology)
 
-                calving_parameters = {"thickness_calving_threshold": 50}
+                calving_parameters = {"thickness_calving_threshold": 100}
 
                 calving_params_dict = generate_calving(calving, **calving_parameters)
 
                 ocean_params_dict = {
-                    "shelf_base_melt_rate": 0.2,
-                    "ocean_delta_T_file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_modifier_file"]
+                    "ocean.constant.melt_rate": 0.2,
+		    "ocean.delta_sl.file": "$input_dir/data_sets/climate_forcing/{}".format(
+                        combination["sealevel_modifier_file"]
                     ),
-		    "ocean_delta_SL_file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_modifier_file"]
-                    ),
-                    "ocean_frac_MBP_file": "$input_dir/data_sets/climate_forcing/{}".format(
-                        combination["climate_modifier_file"]
-                    ),
+#                    "ocean.frac_MBP.file": "$input_dir/data_sets/climate_forcing/{}".format(
+#                        combination["sealevel_modifier_file"]
+#                    ),
                 }
 
                 if mbp == 1:
                     ocean_params_dict["ocean"] = "constant,frac_MBP"
                 else:
-                    ocean_params_dict["ocean"] = "constant"
+                    ocean_params_dict["ocean"] = "constant, delta_sl"
 
                 scalar_ts_dict = generate_scalar_ts(
                     outfile,

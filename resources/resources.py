@@ -376,7 +376,7 @@ def generate_stress_balance(stress_balance, additional_params_dict):
         params_dict["cfbc"] = ""
         params_dict["kill_icebergs"] = ""
         params_dict["part_grid"] = ""
-        params_dict["part_redist"] = ""
+        params_dict["part_redist"] = "" #too old
         params_dict["sia_flow_law"] = "gpbld"
         params_dict["pseudo_plastic"] = ""
         params_dict["tauc_slippery_grounding_lines"] = "false"
@@ -481,7 +481,7 @@ def generate_climate(climate, **kwargs):
         params_dict["atmosphere"] = "given,lapse_rate"
         params_dict["surface.pdd.factor_ice"] = 10.5 / 910  # Ziemen et al (2016)
         params_dict["surface.pdd.factor_snow"] = 4.0 / 910  # Ziemen et al (2016)
-        params_dict["surface.pdd.std_dev"] = 4.23
+        params_dict["surface.pdd.std_dev.value"] = 4.23
         if "atmosphere_given_file" not in kwargs:
             params_dict[
                 "atmosphere_given_file"
@@ -508,8 +508,15 @@ def generate_climate(climate, **kwargs):
         params_dict["atmosphere"] = "given,elevation_change"
         params_dict["surface"] = "pdd,forcing"
     elif climate in ("paleo"):
-        params_dict["atmosphere"] = "given,anomaly"
-        params_dict["atmosphere_anomaly_period"] = 1
+        params_dict["atmosphere"] = "given,anomaly" #add elevation_change here?
+        params_dict["atmosphere.anomaly.periodic"] = "yes"
+        params_dict["atmosphere.given.periodic"] = "yes"
+        params_dict["surface"] = "pdd"
+    elif climate in ("lgmdeglaciation"):
+        params_dict["atmosphere"] = "given,anomaly,elevation_change,delta_T" #,precip_scaling
+        params_dict["atmosphere.anomaly.periodic"] = "yes"
+        params_dict["atmosphere.given.periodic"] = "yes"
+        params_dict["atmosphere.delta_T.periodic"] = "no"
         params_dict["surface"] = "pdd"
     else:
         print(("climate {} not recognized, exiting".format(climate)))
