@@ -302,10 +302,10 @@ done
 # set up model initialization
 # ########################################################
 
-ssa_n = 3.0
-ssa_e = 1.0
+ssa_n = 3.25
+ssa_e = 3.0
 tefo = 0.020
-phi_min = 15.0
+phi_min = 5.0
 phi_max = 40.0
 topg_min = -700
 topg_max = 700
@@ -420,7 +420,7 @@ for n, row in enumerate(uq_df.iterrows()):
                     "ys": start,
                     "ye": end,
                     "calendar": "365_day",
-                    "climate_forcing_buffer_size": 13,
+                    "input.forcing.buffer_size": 13,
                     "o": join(dirs["state"], outfile),
                     "o_format": oformat,
                     "output.compression_level": compression_level,
@@ -501,17 +501,21 @@ for n, row in enumerate(uq_df.iterrows()):
                     "atmosphere.elevation_change.file": "$input_dir/data_sets/climate_forcing/{}".format(
                         combination["climate_file"]
                     ),
-                    "atmosphere.elevation_change.temperature_lapse_rate": combination[
-                        "temperature_lapse_rate"
-                    ],
+                    "atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(
+                        combination["climate_modifier_file"]
+                    ),
+                    # "atmosphere.delta_P.file": "$input_dir/data_sets/climate_forcing/{}".format(                        combination["climate_modifier_file"]                    ),
+
+                    "atmosphere.elevation_change.temperature_lapse_rate": 
+			combination["temperature_lapse_rate"],
                     "force_to_thickness_file": flux_adjustment_file,
                     "surface.pdd.factor_ice": combination["pdd_factor_ice"]
                     / ice_density,
                     "surface.pdd.factor_snow": combination["pdd_factor_snow"]
-                    / ice_density,
-                    "surface.pdd.refreeze": 0.2,
+                   / ice_density,
+                    "surface.pdd.refreeze": combination["refreeze_factor"],
                 }
-                climate_parameters["surface.pdd.std_dev"] = combination["pdd_std_dev"]
+                climate_parameters["surface.pdd.std_dev.value"] = combination["pdd_std_dev"]
                 # climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)
                 climate_params_dict = generate_climate(
                     combination["climate"], **climate_parameters
@@ -525,7 +529,10 @@ for n, row in enumerate(uq_df.iterrows()):
 
                 ocean_params_dict = {
                     "shelf_base_melt_rate": 0.2,
-                    "ocean_delta_SL_file": "$input_dir/data_sets/climate_forcing/{}".format(
+                    "ocean_delta_T_file": "$input_dir/data_sets/climate_forcing/{}".format(
+                        combination["climate_modifier_file"]
+                    ),
+		    "ocean_delta_SL_file": "$input_dir/data_sets/climate_forcing/{}".format(
                         combination["climate_modifier_file"]
                     ),
                     "ocean_frac_MBP_file": "$input_dir/data_sets/climate_forcing/{}".format(
