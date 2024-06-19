@@ -34,6 +34,58 @@ python run_akglaciers.py -e alaska_present.csv --dataset_version 2022_millan -w 
 
 grid=2000
 n=48
+duration=50
+odir=2024_06_calib_init_restart
+
+PISM_PREFIX=$HOME/local-intel/pism/bin python run_akglaciers.py -e ensemble_dynamics_default.csv --domain akglaciers -w 24:00:00 -s chinook -q t2small --stress_balance ssa+sia  --i_dir /import/c1/ICESHEET/ICESHEET/pism-arctic -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10 -i 2024_06_calib_init/state/akglaciers_g2000m_id_0_0_500.nc
+
+grid=2000
+n=48
+duration=500
+odir=2024_06_calib_init
+
+PISM_PREFIX=$HOME/local-intel/pism/bin python run_akglaciers.py -e ensemble_dynamics_default.csv --domain akglaciers -w 24:00:00 -s chinook -q t2small --stress_balance ssa+sia  --i_dir /import/c1/ICESHEET/ICESHEET/pism-arctic -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10
+
+
+grid=1000
+n=48
+duration=20
+odir=2024_06_calib_init
+
+PISM_PREFIX=$HOME/local-intel/pism/bin python run_akglaciers.py -e ensemble_dynamics_default.csv --domain akglaciers -w 24:00:00 -s chinook -q t2small --stress_balance ssa+sia  --i_dir /import/c1/ICESHEET/ICESHEET/pism-arctic -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10 -i 2024_06_calib_init/state/akglaciers_g2000m_id_0_0_500.nc
+
+
+grid=2000
+n=48
+duration=1000
+odir=2024_06_init_malaspina
+
+PISM_PREFIX=$HOME/local-intel/pism/bin python run_akglaciers.py -e alaska_present.csv --domain malaspina -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia  --i_dir /import/c1/ICESHEET/ICESHEET/pism-arctic -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10
+
+grid=1000
+n=96
+duration=500
+odir=2024_06_init_malaspina_hy
+
+PISM_PREFIX=$HOME/local-intel/pism/bin python run_akglaciers.py -e alaska_present.csv --domain akglaciers -w 18:00:00 -s chinook -q t2standard --stress_balance ssa+sia  --i_dir /import/c1/ICESHEET/ICESHEET/pism-arctic -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10
+
+
+grid=2000
+n=48
+duration=500
+odir=2024_06_init
+
+PISM_PREFIX=$HOME/local-intel/pism/bin python run_akglaciers.py -e alaska_present.csv --domain akglaciers -w 18:00:00 -s chinook -q t2small --stress_balance ssa+sia  --i_dir /import/c1/ICESHEET/ICESHEET/pism-arctic -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep 10
+
+grid=1000
+n=48
+duration=1
+odir=2024_06_smb
+
+PISM_PREFIX=$HOME/local-intel/pism/bin python run_akglaciers.py -e alaska_present.csv --domain akglaciers -w 1:00:00 -s chinook -q t2small --stress_balance ssa+sia  --i_dir /import/c1/ICESHEET/ICESHEET/pism-arctic -g ${grid} -n${n} --duration ${duration} --step ${duration} --o_dir ${odir} --exstep monthly
+
+grid=2000
+n=48
 duration=1000
 odir=2023_02_v2023_malaspina
 

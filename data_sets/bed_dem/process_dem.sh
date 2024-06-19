@@ -35,7 +35,7 @@ v=${v:-$default_v}
 akglaciers_grid() {
 
 domain=akglaciers
-localdomain=malaspina
+localdomain=akglaciers
 
 x_min=1600000.0
 x_max=3600000.0

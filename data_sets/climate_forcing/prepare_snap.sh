@@ -38,6 +38,7 @@ end_year=2004
 pr_prefix=pr_cru_TS40_1km
 tas_prefix=tas_cru_TS40_1km
 
+#choose the years and the domain
 for year in {1980..2004}; do
     for mon in 0{1..9} {10..12} ; do
         gdalwarp $options -te $x_min $y_min $x_max $y_max -tr $grid $grid ${pr_prefix}/pr_total_mm_CRU_TS40_historical_${mon}_${year}.tif ${pr_prefix}/pr_total_mm_CRU_TS40_historical_${mon}_${year}_${domain}.nc
@@ -47,18 +48,18 @@ for year in {1980..2004}; do
     done
 done
 
-
-
+#set the variable attributes, rename them
 cdo -L setattribute,precipitation@units="kg m-2 year-1",precipitation@standard_name="precipitation_flux",precipitation@long_name="precipitation" -chname,Band1,precipitation -mulc,12 -mergetime ${pr_prefix}/pr_total_mm_CRU_TS40_historical_*_*_cdo_${domain}.nc  pr_total_mm_CRU_TS40_historical_${start_year}_${end_year}_${domain}_MM.nc
 cdo -L setattribute,air_temp@units="degree_Celsius",air_temp@long_name="2-m air temperature" -selvar,air_temp -chname,Band1,air_temp -mergetime ${tas_prefix}/tas_mean_C_CRU_TS40_historical_*_*_cdo_${domain}.nc tas_mean_C_CRU_TS40_historical_${start_year}_${end_year}_${domain}_MM.nc
-
 cdo -L setattribute,usurf@units="m",usurf@standard_name="surface_elevation",usurf@long_name="surface elevation" -chname,Band1,usurf  ${domain}_iem_prism_dem_1km_${domain}.nc usurf_akcanada_1km_dem_${domain}.nc
 
+#merge tas, pr and usurf, MM
 cdo -L -O -f nc4 -z zip_2 merge usurf_akcanada_1km_dem_${domain}.nc -selyear,${start_year}/${end_year} pr_total_mm_CRU_TS40_historical_${start_year}_${end_year}_${domain}_MM.nc  -selyear,${start_year}/${end_year} tas_mean_C_CRU_TS40_historical_${start_year}_${end_year}_${domain}_MM.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc
 adjust_timeline.py -a ${start_year}-1-1 -d ${start_year}-1-1 -p monthly ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc
 
+#calculate yearly monthly means and stddev
 cdo -L -O -f nc4 -z zip_2 selvar,precipitation,air_temp -ymonmean ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM_uf.nc
-cdo -L -O -f nc4 -z zip_2 selvar,precipitation,air_temp -ymonstd ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMMstd_uf.nc
+#cdo -L -O -f nc4 -z zip_2 selvar,precipitation,air_temp -ymonstd ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_MM.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMMstd_uf.nc #there is no submonthly data
 mpirun -np 8 fill_missing_petsc.py -v air_temp,precipitation ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM_uf.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM.nc
 adjust_timeline.py -a 1-1-1 -d 1-1-1 -p monthly -c 365_day ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM.nc
 ncks -4 -L 2 -A usurf_akcanada_1km_dem_${domain}.nc ${domain}_climate_cru_TS40_historical_${start_year}_${end_year}_YMM.nc

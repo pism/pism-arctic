@@ -14,7 +14,7 @@ options='-overwrite -r average -co FORMAT=NC4 -co COMPRESS=DEFLATE -co ZLEVEL=2'
 akglaciers_grid() {
 
 domain=akglaciers
-localdomain=malaspina
+localdomain=akglaciers
 
 x_min=1600000.0
 x_max=3600000.0
@@ -64,7 +64,7 @@ for grid in 100 250 500 1000 2000 5000; do
     ncap2 -O -s "thickness=surface-topg; where(thickness<0) thickness=0; where(surface<=0) thickness=0; where(slope>35 && thickness<50) {thickness=0;};" pism_${domain}_v${v}_g${grid}m.nc pism_${domain}_v${v}_g${grid}m.nc
     ncrename -v thickness,thickness_mask pism_${domain}_v${v}_g${grid}m_thickness.nc
     ncks -A -v thickness_mask pism_${domain}_v${v}_g${grid}m_thickness.nc pism_${domain}_v${v}_g${grid}m.nc
-    ncap2 -O -s "where(thickness_mask==0) thickness=0;" pism_${domain}_v${v}_g${grid}m.nc pism_${domain}_v${v}_g${grid}m.nc
+    ncap2 -O -s "where(thickness_mask==0) thickness=0; where(thickness<10) thickness=0;" pism_${domain}_v${v}_g${grid}m.nc pism_${domain}_v${v}_g${grid}m.nc
     ncks -O -v thickness_mask,slope -x pism_${domain}_v${v}_g${grid}m.nc pism_${domain}_v${v}_g${grid}m.nc
     ncatted -a _FillValue,thickness,d,,  pism_${domain}_v${v}_g${grid}m.nc
 

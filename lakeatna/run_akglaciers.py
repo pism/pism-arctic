@@ -515,6 +515,8 @@ for n, row in enumerate(uq_df.iterrows()):
 			),
 			"atmosphere.elevation_change.temperature_lapse_rate": 
 				combination["temperature_lapse_rate"],
+			"ocean.delta_sl.periodic": "yes",
+			"sea_level": "constant,delta_sl",
 			"force_to_thickness_file": flux_adjustment_file,
 			"surface.pdd.factor_ice": combination["pdd_factor_ice"]
 			/ ice_density,
@@ -538,37 +540,18 @@ for n, row in enumerate(uq_df.iterrows()):
 			"atmosphere.precip_scaling.file": "$input_dir/data_sets/climate_forcing/{}".format(
 				combination["climate_modifier_file"] #scales the precipitation by the ice core temperature change or not (constant dT for paleo runs)
 			),
-#			"force_to_thickness_file": flux_adjustment_file,
+                        "ocean.delta_sl.periodic": "no",
+                        "sea_level": "constant,delta_sl",
 			"surface.pdd.factor_ice": combination["pdd_factor_ice"]
 			/ ice_density,
 			"surface.pdd.factor_snow": combination["pdd_factor_snow"]
 			/ ice_density,
 			"surface.pdd.refreeze": combination["refreeze_factor"],
                     }
-#                climate_parameters = {
-#                    "atmosphere.given.file": "$input_dir/data_sets/climate_forcing/{}".format(
-#                        combination["climate_file"] #akglaciers_climate_cru_TS40_19980_2004_YMM.nc (spatial, YMM)
-#                    ),
-#                    "atmosphere.anomaly.file": "$input_dir/data_sets/climate_forcing/{}".format(
-#                        combination["anomaly_file"] #akglaciers_GISS-E2-R_lgm_historical.nc (spatial, YMM from GCMs)
-#                    ),
-#		    "atmosphere.elevation_change.temperature_lapse_rate": 
-#			combination["temperature_lapse_rate"],
-#                    "atmosphere.delta_T.file": "$input_dir/data_sets/climate_forcing/{}".format(
-#                        combination["climate_modifier_file"] #scales the temperature by the ice core temperature change or not (constant dT for paleo runs)
-#                    ),
-#                    "atmosphere.precip_scaling.file": "$input_dir/data_sets/climate_forcing/{}".format(
-#                        combination["climate_modifier_file"] #scales the precipitation by the ice core temperature change or not (constant dT for paleo runs)
-#                    ),
-#                    "force_to_thickness_file": flux_adjustment_file,
-#                    "surface.pdd.factor_ice": combination["pdd_factor_ice"]
-#                    / ice_density,
-#                    "surface.pdd.factor_snow": combination["pdd_factor_snow"]
-#                   / ice_density,
-#                    "surface.pdd.refreeze": combination["refreeze_factor"],
-#                }
-                climate_parameters["surface.pdd.std_dev.value"] = combination["pdd_std_dev"]
-                
+
+#                climate_parameters["surface.pdd.std_dev.value"] = combination["pdd_std_dev"]
+                climate_parameters["surface.pdd.std_dev.file"] = "$input_dir/data_sets/climate_forcing/akglaciers_climate_t2_daily_wrf_ERA-Interim_historical_tm_gs_YMMstd.nc"                
+                climate_parameters["surface.pdd.std_dev.periodic"] = "yes"
                     
                 climate_params_dict = generate_climate(
                     combination["climate"], **climate_parameters
@@ -585,15 +568,12 @@ for n, row in enumerate(uq_df.iterrows()):
 		    "ocean.delta_sl.file": "$input_dir/data_sets/climate_forcing/{}".format(
                         combination["sealevel_modifier_file"]
                     ),
-#                    "ocean.frac_MBP.file": "$input_dir/data_sets/climate_forcing/{}".format(
-#                        combination["sealevel_modifier_file"]
-#                    ),
                 }
 
                 if mbp == 1:
                     ocean_params_dict["ocean"] = "constant,frac_MBP"
                 else:
-                    ocean_params_dict["ocean"] = "constant, delta_sl"
+                    ocean_params_dict["ocean"] = "constant"
 
                 scalar_ts_dict = generate_scalar_ts(
                     outfile,

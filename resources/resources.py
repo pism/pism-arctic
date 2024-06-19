@@ -271,22 +271,16 @@ def generate_grid_description(grid_resolution, domain, restart=False):
     except:
         print(("grid resolution {}m not recognized".format(grid_resolution)))
 
+    mz = 161
+    mzb = 1
     if grid_resolution < 1200:
         skip_max = 200
-        mz = 251
-        mzb = 21
     elif (grid_resolution >= 1200) and (grid_resolution < 4500):
         skip_max = 100
-        mz = 251
-        mzb = 21
     elif (grid_resolution >= 4500) and (grid_resolution < 18000):
         skip_max = 50
-        mz = 251
-        mzb = 21
     else:
         skip_max = 20
-        mz = 251
-        mzb = 11
 
     grid_div = grid_resolution / resolution_max
 
@@ -298,9 +292,8 @@ def generate_grid_description(grid_resolution, domain, restart=False):
     horizontal_grid["My"] = my
 
     vertical_grid = OrderedDict()
-    vertical_grid["Lz"] = 5000
-    vertical_grid["Lbz"] = 2000
-    vertical_grid["z_spacing"] = "equal"
+    vertical_grid["Lz"] = 1600
+    vertical_grid["Lbz"] = 0
     vertical_grid["Mz"] = mz
     vertical_grid["Mbz"] = mzb
 
@@ -576,7 +569,7 @@ systems["debug"] = {
 }
 
 systems["chinook"] = {
-    "mpido": "mpirun -np {cores} -machinefile ./nodes_$SLURM_JOBID",
+    "mpido": "mpirun -np {cores}",
     "submit": "sbatch",
     "work_dir": "SLURM_SUBMIT_DIR",
     "job_id": "SLURM_JOBID",

@@ -101,7 +101,7 @@ parser.add_argument(
     dest="oformat",
     choices=["netcdf3", "netcdf4_parallel", "netcdf4_serial", "pnetcdf"],
     help="output format",
-    default="netcdf4_serial",
+    default="netcdf4_parallel",
 )
 parser.add_argument(
     "-g",
@@ -198,7 +198,7 @@ parser.add_argument(
     "-L",
     "--comp_level",
     dest="compression_level",
-    help="Compression level for output file. Only works with netcdf4_serial.",
+    help="Compression level for output file.",
     default=2,
 )
 parser.add_argument(
@@ -356,7 +356,7 @@ for n, row in enumerate(uq_df.iterrows()):
 
     bed_deformation = bd_dict[m_bd]
 
-    ttphi = "{},{},{},{}".format(phi_min, phi_max, topg_min, topg_max)
+    ttphi = f"""{combination["phi_min"]},{combination["phi_max"]},{combination["z_min"]},{combination["z_max"]}"""
 
     name_options = {}
     try:
@@ -469,9 +469,10 @@ for n, row in enumerate(uq_df.iterrows()):
                     "sia_e": combination["sia_e"],
                     "stress_balance.blatter.enhancement_factor": combination["sia_e"],
                     "ssa_e": ssa_e,
-                    "ssa_n": ssa_n,
-                    "pseudo_plastic_q": combination["ppq"],
-                    "till_effective_fraction_overburden": tefo,
+                    "ssa_n": combination["ssa_n"],
+                    "sia_n": combination["sia_n"],
+                    "pseudo_plastic_q": combination["pseudo_plastic_q"],
+                    "till_effective_fraction_overburden": combination["till_effective_fraction_overburden"],
                     "vertical_velocity_approximation": vertical_velocity_approximation,
                     "stress_balance.ssa.strength_extension.constant_nu": 1.0e16,
                 }
@@ -509,7 +510,7 @@ for n, row in enumerate(uq_df.iterrows()):
                     / ice_density,
                     "surface.pdd.factor_snow": combination["pdd_factor_snow"]
                     / ice_density,
-                    "surface.pdd.refreeze": 0.2,
+                    "surface.pdd.refreeze": 0.4,
                 }
                 climate_parameters["surface.pdd.std_dev"] = combination["pdd_std_dev"]
                 # climate_parameters["pdd_sd_file"] = "$input_dir/data_sets/climate_forcing/{}".format(climate_file)

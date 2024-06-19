@@ -14,7 +14,7 @@ y_min=-1920000.0
 y_max=-860000.0
 
 pmip_dir=PMIP_Alaska_project # folder with a subfolder for each GCM, each GCM-folder has two subfolders /historical and /lgm which contain the tas, ts and pr GCM output for the experiment
-cdo_opt="-L -O -f nc4 -z zip_2" #options for cdo to -O overwrite, -z compress the files after each action again, etc.
+cdo_opt="-L -O -f nc4 -z zip_4" #options for cdo to -O overwrite, -z compress the files after each action again, etc.
 
 #CESM2-WACCM-FV2 INM-CM4 MIROC-ES2L MPI-ESM1-2-LR
 #CESM2-WACCM-FV2 CNRM-CM5 GISS-E2-R INM-CM4 IPSL-CM5A-LR MIROC-ES2L MIROC-ESM MPI-ESM1-2-LR MPI-ESM-P MRI-CGCM3
